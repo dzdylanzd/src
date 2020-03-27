@@ -14,6 +14,7 @@
 #include "Logger.hpp"
 #include "Client.hpp"
 #include "Message.hpp"
+#include <string>
 
 namespace Application
 {
@@ -344,6 +345,7 @@ namespace Application
 	void MainFrameWindow::OnStartRobot( CommandEvent& UNUSEDPARAM(anEvent))
 	{
 		Logger::log( "Attempting to start Robot...");
+		unsigned short RobotID = std::stoul(Application::MainApplication::getArg("-robot").value) ;
 		Model::RobotPtr robot = Model::RobotWorld::getRobotWorld().getRobot( "Robot");
 		if (robot && !robot->isActing())
 		{

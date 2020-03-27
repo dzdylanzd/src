@@ -52,18 +52,15 @@ void PopulatePattern::PatternA()
 				false);
 		Model::RobotWorld::getRobotWorld().newGoal("Goal P1", Point(400, 500),
 				false);
-		Model::RobotWorld::getRobotWorld().newRobot("player2", Point(500, 400),
-					false);
-			Model::RobotWorld::getRobotWorld().newGoal("Goal P2", Point(10, 100),
-					false);
+
 	}
 	else if (robotID == 2)
 	{
 		Application::Logger::log("pattern A robot 1");
 		Model::RobotWorld::getRobotWorld().newRobot("player2", Point(500, 400),
-				false);
-		Model::RobotWorld::getRobotWorld().newGoal("Goal", Point(10, 100),
-				false);
+						false);
+				Model::RobotWorld::getRobotWorld().newGoal("Goal P2", Point(10, 100),
+						false);
 	}
 
 }
