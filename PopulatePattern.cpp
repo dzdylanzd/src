@@ -8,6 +8,7 @@
 #include "PopulatePattern.h"
 #include "Logger.hpp"
 #include "RobotWorld.hpp"
+#include "Robot.hpp"
 
 PopulatePattern::PopulatePattern(const unsigned short aRobotID) :
 		robotID(aRobotID)
@@ -44,6 +45,17 @@ void PopulatePattern::populate(const unsigned short pattern)
 
 void PopulatePattern::PatternA()
 {
+	if (robotID == 1)
+	{
+		Application::Logger::log("pattern A robot 1");
+		Model::RobotWorld::getRobotWorld().newRobot( "player1", Point(100,10),false);
+		Model::RobotWorld::getRobotWorld().newGoal("Goal", Point(400, 500),	false);
+	}
+	else if (robotID == 2)
+	{
+
+	}
+
 }
 
 void PopulatePattern::PatternB()
@@ -62,7 +74,7 @@ void PopulatePattern::PatternB()
 				Point(419, 234), false);
 		Model::RobotWorld::getRobotWorld().newGoal("Goal", Point(320, 285),
 				false);
-		RobotWorld::getRobotWorld().newRobot( "Robot", Point(163,111),false);
+		Model::RobotWorld::getRobotWorld().newRobot( "Robot", Point(163,111),false);
 	}
 }
 
