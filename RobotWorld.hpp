@@ -88,6 +88,10 @@ namespace Model
 			/**
 			 *
 			 */
+			RobotPtr getRobot(const unsigned short robotId) const;
+			/**
+			 *
+			 */
 			WayPointPtr getWayPoint( const std::string& aName) const;
 			/**
 			 *

@@ -89,6 +89,7 @@ namespace Application
 			void OnStdOutDebugTraceFunction( CommandEvent& anEvent);
 			void OnAbout( CommandEvent& anEvent);
 
+			void onMerge(CommandEvent& anEvent);
 			void OnStartRobot( CommandEvent& anEvent);
 			void OnStopRobot( CommandEvent& anEvent);
 			void OnPopulate( CommandEvent& anEvent);

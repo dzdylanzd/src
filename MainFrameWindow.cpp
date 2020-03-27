@@ -245,6 +245,8 @@ Panel* MainFrameWindow::initialiseButtonPanel()
 
 	sizer->Add(makeButton(panel, "Populate", [this](CommandEvent &anEvent)
 	{	this->OnPopulate(anEvent);}), GBPosition(0, 0), GBSpan(1, 1), EXPAND);
+	sizer->Add(makeButton(panel, "Merge", [this](CommandEvent &anEvent)
+	{	this->onMerge(anEvent);}), GBPosition(0, 2), GBSpan(1, 1), EXPAND);
 	sizer->Add(makeButton(panel, "Unpopulate", [this](CommandEvent &anEvent)
 	{	this->OnUnpopulate(anEvent);}), GBPosition(0, 1), GBSpan(1, 1), EXPAND);
 
@@ -336,8 +338,9 @@ void MainFrameWindow::OnStartRobot(CommandEvent&UNUSEDPARAM(anEvent))
 void MainFrameWindow::OnStopRobot(CommandEvent&UNUSEDPARAM(anEvent))
 {
 	Logger::log("Attempting to stop Robot...");
-	Model::RobotPtr robot = Model::RobotWorld::getRobotWorld().getRobot(
-			"Robot");
+	unsigned short RobotId = std::stoul(Application::MainApplication::getArg("-robot").value);
+		Model::RobotPtr robot = Model::RobotWorld::getRobotWorld().getRobot(
+				RobotId);
 	if (robot && robot->isActing())
 	{
 		robot->stopActing();
@@ -362,8 +365,9 @@ void MainFrameWindow::OnUnpopulate(CommandEvent&UNUSEDPARAM(anEvent))
  */
 void MainFrameWindow::OnStartListening(CommandEvent&UNUSEDPARAM(anEvent))
 {
-	Model::RobotPtr robot = Model::RobotWorld::getRobotWorld().getRobot(
-			"Robot");
+	unsigned short RobotId = std::stoul(Application::MainApplication::getArg("-robot").value);
+		Model::RobotPtr robot = Model::RobotWorld::getRobotWorld().getRobot(
+				RobotId);
 	if (robot)
 	{
 		robot->startCommunicating();
@@ -375,8 +379,9 @@ void MainFrameWindow::OnStartListening(CommandEvent&UNUSEDPARAM(anEvent))
 void MainFrameWindow::OnSendMessage(CommandEvent&UNUSEDPARAM(anEvent))
 {
 	Application::Logger::log("trying to send message");
-	Model::RobotPtr robot = Model::RobotWorld::getRobotWorld().getRobot(
-			"Robot");
+	unsigned short RobotId = std::stoul(Application::MainApplication::getArg("-robot").value);
+		Model::RobotPtr robot = Model::RobotWorld::getRobotWorld().getRobot(
+				RobotId);
 	if (robot)
 	{
 		std::string remoteIpAdres = "localhost";
@@ -390,6 +395,8 @@ void MainFrameWindow::OnSendMessage(CommandEvent&UNUSEDPARAM(anEvent))
 		{
 			remotePort = MainApplication::getArg("-remote_port").value;
 		}
+
+		Application::Logger::log(remotePort);
 
 		// We will request an echo message. The response will be "Hello World", if all goes OK,
 		// "Goodbye cruel world!" if something went wrong.
@@ -405,11 +412,46 @@ void MainFrameWindow::OnSendMessage(CommandEvent&UNUSEDPARAM(anEvent))
  */
 void MainFrameWindow::OnStopListening(CommandEvent&UNUSEDPARAM(anEvent))
 {
-	Model::RobotPtr thijs = Model::RobotWorld::getRobotWorld().getRobot(
-			"Robot");
-	if (thijs)
+	unsigned short RobotId = std::stoul(Application::MainApplication::getArg("-robot").value);
+		Model::RobotPtr robot = Model::RobotWorld::getRobotWorld().getRobot(
+				RobotId);
+	if (robot)
 	{
-		thijs->stopCommunicating();
+		robot->stopCommunicating();
 	}
 }
+
+void MainFrameWindow::onMerge(CommandEvent &anEvent)
+{
+
+	unsigned short RobotId = std::stoul(Application::MainApplication::getArg("-robot").value);
+		Model::RobotPtr robot = Model::RobotWorld::getRobotWorld().getRobot(
+				RobotId);
+
+	if (robot)
+	{
+
+		std::string remoteIpAdres = "localhost";
+		std::string remotePort = "12345";
+
+		if (MainApplication::isArgGiven("-remote_ip"))
+		{
+			remoteIpAdres = MainApplication::getArg("-remote_ip").value;
+		}
+		if (MainApplication::isArgGiven("-remote_port"))
+		{
+			remotePort = MainApplication::getArg("-remote_port").value;
+		}
+
+		Messaging::Client c1ient(remoteIpAdres, remotePort, robot);
+		Messaging::Message message(Model::Robot::MessageType::MergeRequest,
+				"jan");
+		Application::Logger::log("trying to send message");
+		c1ient.dispatchMessage(message);
+	}
+
+
+	Application::Logger::log("merge");
+}
+
 } // namespace Application

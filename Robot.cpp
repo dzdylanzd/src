@@ -379,6 +379,10 @@ void Robot::handleRequest(Messaging::Message &aMessage)
 		aMessage.setBody(": case 1 " + aMessage.asString());
 		break;
 	}
+	case MergeRequest:{
+		Application::Logger::log(aMessage.asDebugString());
+
+	}
 	default:
 	{
 		Application::Logger::log(
