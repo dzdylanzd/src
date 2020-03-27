@@ -5,10 +5,11 @@
 #include <vector>
 #include "ModelObject.hpp"
 #include "Point.hpp"
+#include "Robot.hpp"
 
 namespace Model
 {
-class Robot;
+//class Robot;
 typedef std::shared_ptr<Robot> RobotPtr;
 
 class WayPoint;
@@ -31,11 +32,18 @@ class RobotWorld: public ModelObject
 public:
 
 	/**
-	 *
+	 * makes the walls from the other client based on the wallData string using regex
+	 * @pre: a robot has to be robot present
 	 */
-	void mergeWorlds(std::string wallData);
+	void mergeWorlds(const std::string& wallData);
+	/**
+	 * sends the wall data to the other client
+	 * @pre there has to be a robot present
+	 */
+	void sendWalls(const Model::Robot::MessageType type);
 	/**
 	 *
+	 * @return
 	 */
 	static RobotWorld& getRobotWorld();
 	/**

@@ -381,10 +381,17 @@ void Robot::handleRequest(Messaging::Message &aMessage)
 	}
 	case MergeRequest:
 	{
+		Model::RobotWorld::getRobotWorld().sendWalls(Robot::MessageType::MergeResponse);
 		Application::Logger::log(aMessage.getBody());
-		std::string test = "this subject has a submarine as a subsequence";
-//		Model::RobotWorld::getRobotWorld().mergeWorlds(test);
+		Model::RobotWorld::getRobotWorld().mergeWorlds(aMessage.getBody());
+		break;
 	}
+	case MergeResponse:
+		{
+			Application::Logger::log(aMessage.getBody());
+			Model::RobotWorld::getRobotWorld().mergeWorlds(aMessage.getBody());
+			break;
+		}
 	default:
 	{
 		Application::Logger::log(

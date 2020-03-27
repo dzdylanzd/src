@@ -8,6 +8,7 @@
 #include "MainApplication.hpp"
 #include "PopulatePattern.h"
 #include <regex>
+#include "Client.hpp"
 
 namespace Model
 {
@@ -172,22 +173,63 @@ RobotPtr RobotWorld::getRobot(const std::string &aName) const
 	return nullptr;
 }
 
-void mergeWorlds(std::string wallData)
+void RobotWorld::mergeWorlds(const std::string &wallData)
 {
-	std::smatch m;
-	std::stringstream os;
-	std::regex e("\\b(sub)([^ ]*)");   // matches words beginning by "sub"
 
+	std::string wallString = wallData;
+	Application::Logger::log(wallString);
+	std::regex mergeMessageExpression(
+			"^(Wall:\\s+\\((\\d+),+(\\d+)\\)\\s+-\\s+\\((\\d+),(\\d+)\\)\\s*)+$");
 
-	while (std::regex_search(wallData, m, e))
+	if (std::regex_match(wallString, mergeMessageExpression))
 	{
-		for (auto x : m)
+		Application::Logger::log("match");
+		std::regex regexWall(
+				"Wall:\\s+\\((\\d+),+(\\d+)\\)\\s+-\\s+\\((\\d+),(\\d+)\\)");
+
+		for (std::sregex_iterator i(wallString.begin(), wallString.end(),
+				regexWall); i != std::sregex_iterator(); ++i)
 		{
-			os << x << "\n";
+			std::smatch matches = *i;
+			newWall(Point(std::stoi(matches[1]), std::stoi(matches[2])),
+					Point(std::stoi(matches[3]), std::stoi(matches[4])));
 		}
-    Application::Logger::log(os.str());
-		wallData = m.suffix().str();
 	}
+}
+/**
+ *
+ */
+
+void RobotWorld::sendWalls(const Model::Robot::MessageType type)
+{
+	unsigned short RobotId = std::stoul(
+			Application::MainApplication::getArg("-robot").value);
+	Model::RobotPtr robot = Model::RobotWorld::getRobotWorld().getRobot(
+			RobotId);
+
+	if (robot)
+	{
+		std::string remoteIpAdres = "localhost";
+		std::string remotePort = "12345";
+
+		if (Application::MainApplication::isArgGiven("-remote_ip"))
+		{
+			remoteIpAdres =
+					Application::MainApplication::getArg("-remote_ip").value;
+		}
+		if (Application::MainApplication::isArgGiven("-remote_port"))
+		{
+			remotePort =
+					Application::MainApplication::getArg("-remote_port").value;
+		}
+		Messaging::Client c1ient(remoteIpAdres, remotePort, robot);
+		Messaging::Message message(type,
+				Model::RobotWorld::getRobotWorld().getAllWallData());
+		Application::Logger::log("trying to send message");
+		c1ient.dispatchMessage(message);
+	}
+
+	Application::Logger::log("merge");
 }
 /**
  *
@@ -472,7 +514,7 @@ RobotWorld::RobotWorld()
  */
 RobotWorld::~RobotWorld()
 {
-	// No notification while I am in the destruction mode!
+// No notification while I am in the destruction mode!
 	disableNotification();
 	unpopulate();
 }
