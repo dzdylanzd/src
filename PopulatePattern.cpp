@@ -48,12 +48,22 @@ void PopulatePattern::PatternA()
 	if (robotID == 1)
 	{
 		Application::Logger::log("pattern A robot 1");
-		Model::RobotWorld::getRobotWorld().newRobot( "player1", Point(100,10),false);
-		Model::RobotWorld::getRobotWorld().newGoal("Goal", Point(400, 500),	false);
+		Model::RobotWorld::getRobotWorld().newRobot("player1", Point(100, 10),
+				false);
+		Model::RobotWorld::getRobotWorld().newGoal("Goal P1", Point(400, 500),
+				false);
+		Model::RobotWorld::getRobotWorld().newRobot("player2", Point(500, 400),
+					false);
+			Model::RobotWorld::getRobotWorld().newGoal("Goal P2", Point(10, 100),
+					false);
 	}
 	else if (robotID == 2)
 	{
-
+		Application::Logger::log("pattern A robot 1");
+		Model::RobotWorld::getRobotWorld().newRobot("player2", Point(500, 400),
+				false);
+		Model::RobotWorld::getRobotWorld().newGoal("Goal", Point(10, 100),
+				false);
 	}
 
 }
@@ -74,7 +84,8 @@ void PopulatePattern::PatternB()
 				Point(419, 234), false);
 		Model::RobotWorld::getRobotWorld().newGoal("Goal", Point(320, 285),
 				false);
-		Model::RobotWorld::getRobotWorld().newRobot( "Robot", Point(163,111),false);
+		Model::RobotWorld::getRobotWorld().newRobot("Robot", Point(163, 111),
+				false);
 	}
 }
 
