@@ -174,7 +174,7 @@ void Robot::startDriving()
 	Application::Logger::log(name);
 	if (name == "player1")
 	{
-Application::Logger::log("player 1 goal detectie");
+		Application::Logger::log("player 1 goal detectie");
 		goal = RobotWorld::getRobotWorld().getGoal("Goal P1");
 	}
 	else if (name == "player2")
@@ -379,9 +379,11 @@ void Robot::handleRequest(Messaging::Message &aMessage)
 		aMessage.setBody(": case 1 " + aMessage.asString());
 		break;
 	}
-	case MergeRequest:{
+	case MergeRequest:
+	{
 		Application::Logger::log(aMessage.getBody());
-
+		std::string test = "this subject has a submarine as a subsequence";
+//		Model::RobotWorld::getRobotWorld().mergeWorlds(test);
 	}
 	default:
 	{

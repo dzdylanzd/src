@@ -7,6 +7,7 @@
 #include <algorithm>
 #include "MainApplication.hpp"
 #include "PopulatePattern.h"
+#include <regex>
 
 namespace Model
 {
@@ -170,18 +171,40 @@ RobotPtr RobotWorld::getRobot(const std::string &aName) const
 	}
 	return nullptr;
 }
+
+void mergeWorlds(std::string wallData)
+{
+	std::smatch m;
+	std::stringstream os;
+	std::regex e("\\b(sub)([^ ]*)");   // matches words beginning by "sub"
+
+
+	while (std::regex_search(wallData, m, e))
+	{
+		for (auto x : m)
+		{
+			os << x << "\n";
+		}
+    Application::Logger::log(os.str());
+		wallData = m.suffix().str();
+	}
+}
 /**
  *
  */
 RobotPtr RobotWorld::getRobot(const unsigned short robotId) const
 {
-	unsigned short RobotId = std::stoul(Application::MainApplication::getArg("-robot").value);
-		std::string name;
-	if(RobotId == 1){
-	 name = "player1";
-	}else if(RobotId == 2){
+	unsigned short RobotId = std::stoul(
+			Application::MainApplication::getArg("-robot").value);
+	std::string name;
+	if (RobotId == 1)
+	{
+		name = "player1";
+	}
+	else if (RobotId == 2)
+	{
 		name = "player2";
-		}
+	}
 	for (RobotPtr robot : robots)
 	{
 		if (robot->getName() == name)
@@ -276,11 +299,12 @@ WallPtr RobotWorld::getWall(const Base::ObjectId &anObjectId) const
 	return nullptr;
 }
 
-std::string RobotWorld::getAllWallData() const{
+std::string RobotWorld::getAllWallData() const
+{
 	std::string os;
 	for (WallPtr wall : walls)
 	{
-              os = os + wall->getPointData() + "\n";
+		os = os + wall->getPointData() + "\n";
 	}
 	return os;
 }
