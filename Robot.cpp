@@ -380,7 +380,7 @@ void Robot::handleRequest(Messaging::Message &aMessage)
 		break;
 	}
 	case MergeRequest:{
-		Application::Logger::log(aMessage.asDebugString());
+		Application::Logger::log(aMessage.getBody());
 
 	}
 	default:

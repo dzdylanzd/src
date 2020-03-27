@@ -92,6 +92,10 @@ namespace Model
 			/**
 			 *
 			 */
+			std::string getAllWallData() const;
+			/**
+			 *
+			 */
 			WayPointPtr getWayPoint( const std::string& aName) const;
 			/**
 			 *

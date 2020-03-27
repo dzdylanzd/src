@@ -276,6 +276,15 @@ WallPtr RobotWorld::getWall(const Base::ObjectId &anObjectId) const
 	return nullptr;
 }
 
+std::string RobotWorld::getAllWallData() const{
+	std::string os;
+	for (WallPtr wall : walls)
+	{
+              os = os + wall->getPointData() + "\n";
+	}
+	return os;
+}
+
 /**
  *
  */

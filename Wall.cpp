@@ -61,6 +61,15 @@ namespace Model
 
 		return os.str();
 	}
+
+	std::string Wall::getPointData() const
+		{
+			std::ostringstream os;
+
+			os << "Wall: " << Utils::Shape2DUtils::asString( point1) << " - " << Utils::Shape2DUtils::asString( point2);
+
+			return os.str();
+		}
 	/**
 	 *
 	 */

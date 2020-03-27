@@ -14,6 +14,7 @@
 #include "Logger.hpp"
 #include "Client.hpp"
 #include "Message.hpp"
+#include "RobotWorld.hpp"
 #include <string>
 
 namespace Application
@@ -443,9 +444,11 @@ void MainFrameWindow::onMerge(CommandEvent &anEvent)
 			remotePort = MainApplication::getArg("-remote_port").value;
 		}
 
+
+
 		Messaging::Client c1ient(remoteIpAdres, remotePort, robot);
 		Messaging::Message message(Model::Robot::MessageType::MergeRequest,
-				"jan");
+				Model::RobotWorld::getRobotWorld().getAllWallData());
 		Application::Logger::log("trying to send message");
 		c1ient.dispatchMessage(message);
 	}

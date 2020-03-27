@@ -391,6 +391,7 @@ namespace View
 	 */
 	bool RobotWorldCanvas::selectShapeAt( const Point& aPoint)
 	{
+
 		for (ShapePtr shape : shapes)
 		{
 			if (shape->occupies( aPoint))

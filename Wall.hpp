@@ -25,6 +25,10 @@ namespace Model
 			/**
 			 *
 			 */
+			std::string getPointData() const;
+			/**
+			 *
+			 */
 			virtual ~Wall();
 			/**
 			 *
