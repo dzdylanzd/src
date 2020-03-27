@@ -15,11 +15,12 @@ public:
 	PopulatePattern(const unsigned short aRobotID);
 	virtual ~PopulatePattern();
 	void populate(const unsigned short pattern);
+private:
 	void PatternA();
 	void PatternB();
 	void PatternC();
+	void drawWalls();
 
-private:
 	const unsigned short robotID;
 };
 

@@ -23,6 +23,7 @@ PopulatePattern::~PopulatePattern()
 
 void PopulatePattern::populate(const unsigned short pattern)
 {
+	drawWalls();
 	switch (pattern)
 	{
 	case PopulatePattern::pattern::patternA:
@@ -48,44 +49,69 @@ void PopulatePattern::PatternA()
 	if (robotID == 1)
 	{
 		Application::Logger::log("pattern A robot 1");
-		Model::RobotWorld::getRobotWorld().newRobot("player1", Point(100, 10),
-				false);
-		Model::RobotWorld::getRobotWorld().newGoal("Goal P1", Point(400, 500),
-				false);
-
+		Model::RobotWorld::getRobotWorld().newRobot("player1", Point(50, 50), false);
+		Model::RobotWorld::getRobotWorld().newGoal("Goal P1", Point(450, 450), false);
+		//TODO: remove robot 2
+		Model::RobotWorld::getRobotWorld().newRobot("player2", Point(400, 450), false);
+		Model::RobotWorld::getRobotWorld().newGoal("Goal P2", Point(100, 50), false);
 	}
 	else if (robotID == 2)
 	{
-		Application::Logger::log("pattern A robot 1");
-		Model::RobotWorld::getRobotWorld().newRobot("player2", Point(500, 400),
-						false);
-				Model::RobotWorld::getRobotWorld().newGoal("Goal P2", Point(10, 100),
-						false);
+		Application::Logger::log("pattern A robot 2");
+		Model::RobotWorld::getRobotWorld().newRobot("player2", Point(400, 450), false);
+		Model::RobotWorld::getRobotWorld().newGoal("Goal P2", Point(100, 50), false);
 	}
-
 }
 
 void PopulatePattern::PatternB()
 {
 	if (robotID == 1)
 	{
-		Application::Logger::log("robot 1");
-		Model::RobotWorld::getRobotWorld().newWall(Point(7, 234),
-				Point(419, 234), false);
-		Model::RobotWorld::getRobotWorld().newGoal("Goal", Point(500, 500),
-				false);
+		Application::Logger::log("pattern B robot 1");
+		Model::RobotWorld::getRobotWorld().newRobot("player1", Point(50, 50), false);
+		Model::RobotWorld::getRobotWorld().newGoal("Goal P1", Point(450, 450), false);
+		//TODO: remove robot 2
+		Model::RobotWorld::getRobotWorld().newRobot("player2", Point(450, 50), false);
+		Model::RobotWorld::getRobotWorld().newGoal("Goal P2", Point(50, 450), false);
 	}
 	else if (robotID == 2)
 	{
-		Model::RobotWorld::getRobotWorld().newWall(Point(7, 234),
-				Point(419, 234), false);
-		Model::RobotWorld::getRobotWorld().newGoal("Goal", Point(320, 285),
-				false);
-		Model::RobotWorld::getRobotWorld().newRobot("Robot", Point(163, 111),
-				false);
+		Application::Logger::log("pattern B robot 2");
+		Model::RobotWorld::getRobotWorld().newRobot("player2", Point(450, 50), false);
+		Model::RobotWorld::getRobotWorld().newGoal("Goal P2", Point(50, 450), false);
 	}
 }
 
 void PopulatePattern::PatternC()
 {
+	if (robotID == 1)
+	{
+		Application::Logger::log("pattern C robot 1");
+		Model::RobotWorld::getRobotWorld().newRobot("player1", Point(50, 50), false);
+		Model::RobotWorld::getRobotWorld().newGoal("Goal P1", Point(450, 450), false);
+		Model::RobotWorld::getRobotWorld().newWall(Point(0, 150), Point(300, 150));
+		//TODO: remove robot 2
+		Model::RobotWorld::getRobotWorld().newRobot("player2", Point(400, 450), false);
+		Model::RobotWorld::getRobotWorld().newGoal("Goal P2", Point(100, 50), false);
+		Model::RobotWorld::getRobotWorld().newWall(Point(200, 300), Point(500, 300));
+	}
+	else if (robotID == 2)
+	{
+		Application::Logger::log("pattern C robot 2");
+		Model::RobotWorld::getRobotWorld().newRobot("player2", Point(400, 450), false);
+		Model::RobotWorld::getRobotWorld().newGoal("Goal P2", Point(100, 50), false);
+		Model::RobotWorld::getRobotWorld().newWall(Point(200, 300), Point(500, 300));
+	}
+}
+
+void PopulatePattern::drawWalls()
+{
+	// top wall
+	Model::RobotWorld::getRobotWorld().newWall(Point(0,0), Point(500, 0));
+	// right wall
+	Model::RobotWorld::getRobotWorld().newWall(Point(500,0), Point(500, 500));
+	// bottom wall
+	Model::RobotWorld::getRobotWorld().newWall(Point(0, 500), Point(500, 500));
+	// left wall
+	Model::RobotWorld::getRobotWorld().newWall(Point(0,0), Point(0, 500));
 }
