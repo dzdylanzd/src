@@ -411,6 +411,28 @@ void RobotWorld::unpopulate(bool aNotifyObservers /*= true*/)
 	}
 }
 /**
+ * update other world
+ */
+void RobotWorld::updateOtherRobot(const std::string& data){
+
+	std::string robotString = data;
+
+			std::regex regexWall(
+					"/\d+/g");
+			for (std::sregex_iterator i(robotString.begin(), robotString.end(),
+					regexWall); i != std::sregex_iterator(); ++i)
+			{
+				std::smatch matches = *i;
+				Application::Logger::log("match");
+				Application::Logger::log(matches[2]);
+				Application::Logger::log(matches[3]);
+			}
+
+
+}
+
+
+/**
  *
  */
 void RobotWorld::unpopulate(const std::vector<Base::ObjectId> &aKeepObjects,

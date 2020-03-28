@@ -45,6 +45,11 @@ public:
 	 *
 	 * @return
 	 */
+	void updateOtherRobot(const std::string& data);
+	/**
+	 *
+	 * @return
+	 */
 	static RobotWorld& getRobotWorld();
 	/**
 	 *

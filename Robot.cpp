@@ -381,25 +381,27 @@ void Robot::handleRequest(Messaging::Message &aMessage)
 	}
 	case MergeRequest:
 	{
-		Model::RobotWorld::getRobotWorld().sendWalls(Robot::MessageType::MergeResponse);
+		Model::RobotWorld::getRobotWorld().sendWalls(
+				Robot::MessageType::MergeResponse);
 		Application::Logger::log(aMessage.getBody());
 		Model::RobotWorld::getRobotWorld().mergeWorlds(aMessage.getBody());
 		break;
 	}
 	case MergeResponse:
-		{
-			Application::Logger::log(aMessage.getBody());
-			Model::RobotWorld::getRobotWorld().mergeWorlds(aMessage.getBody());
-			break;
-		}
+	{
+		Application::Logger::log(aMessage.getBody());
+		Model::RobotWorld::getRobotWorld().mergeWorlds(aMessage.getBody());
+		break;
+	}
 	case StartRequest:
 	{
 		Application::Logger::log("start test");
 		startActing();
 		break;
 	}
-	case Location:{
-		Application::Logger::log(aMessage.getBody());
+	case Location:
+	{
+		Model::RobotWorld::getRobotWorld().updateOtherRobot(aMessage.getBody());
 		break;
 	}
 	default:
@@ -526,27 +528,32 @@ void Robot::drive()
 /**
  *
  */
-void Robot::sendLocation(){
-	unsigned short RobotId = std::stoul(Application::MainApplication::getArg("-robot").value);
-			Model::RobotPtr robot = Model::RobotWorld::getRobotWorld().getRobot(
-					RobotId);
-			if (robot)
-			{
-				std::string remoteIpAdres = "localhost";
-				std::string remotePort = "12345";
-				if (Application::MainApplication::isArgGiven("-remote_ip"))
-				{
-					remoteIpAdres = Application::MainApplication::getArg("-remote_ip").value;
-				}
-				if (Application::MainApplication::isArgGiven("-remote_port"))
-				{
-					remotePort = Application::MainApplication::getArg("-remote_port").value;
-				}
-				Messaging::Client c1ient(remoteIpAdres, remotePort, robot);
+void Robot::sendLocation()
+{
+	unsigned short RobotId = std::stoul(
+			Application::MainApplication::getArg("-robot").value);
+	Model::RobotPtr robot = Model::RobotWorld::getRobotWorld().getRobot(
+			RobotId);
+	if (robot)
+	{
+		std::string remoteIpAdres = "localhost";
+		std::string remotePort = "12345";
+		if (Application::MainApplication::isArgGiven("-remote_ip"))
+		{
+			remoteIpAdres =
+					Application::MainApplication::getArg("-remote_ip").value;
+		}
+		if (Application::MainApplication::isArgGiven("-remote_port"))
+		{
+			remotePort =
+					Application::MainApplication::getArg("-remote_port").value;
+		}
+		Messaging::Client c1ient(remoteIpAdres, remotePort, robot);
 
-				Messaging::Message message(Model::Robot::MessageType::Location,asString());
-				c1ient.dispatchMessage(message);
-			}
+		Messaging::Message message(Model::Robot::MessageType::Location,
+				asString());
+		c1ient.dispatchMessage(message);
+	}
 }
 /**
  *
