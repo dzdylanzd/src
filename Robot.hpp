@@ -248,7 +248,9 @@ namespace Model
 				EchoRequest,
 				EchoResponse,
 				MergeRequest,
-				MergeResponse
+				MergeResponse,
+				StartRequest,
+				Location
 			};
 
 		protected:
@@ -286,6 +288,7 @@ namespace Model
 			bool communicating;
 
 			std::thread robotThread;
+			void sendLocation();
 			mutable std::recursive_mutex robotMutex;
 	};
 } // namespace Model

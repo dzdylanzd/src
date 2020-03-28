@@ -83,7 +83,7 @@ namespace Application
 			Panel* buttonPanel;
 
 			Base::DebugTraceFunction* debugTraceFunction;
-
+			void sendStartMessage();
 			void OnQuit( CommandEvent& anEvent);
 			void OnWidgetDebugTraceFunction( CommandEvent& anEvent);
 			void OnStdOutDebugTraceFunction( CommandEvent& anEvent);

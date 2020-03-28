@@ -331,7 +331,33 @@ void MainFrameWindow::OnStartRobot(CommandEvent&UNUSEDPARAM(anEvent))
 	{
 		Application::Logger::log("start robot 1");
 		robot->startActing();
+		sendStartMessage();
 	}
+}
+/**
+ *
+ */
+void MainFrameWindow::sendStartMessage(){
+	unsigned short RobotId = std::stoul(Application::MainApplication::getArg("-robot").value);
+		Model::RobotPtr robot = Model::RobotWorld::getRobotWorld().getRobot(
+				RobotId);
+		if (robot)
+		{
+			std::string remoteIpAdres = "localhost";
+			std::string remotePort = "12345";
+			if (MainApplication::isArgGiven("-remote_ip"))
+			{
+				remoteIpAdres = MainApplication::getArg("-remote_ip").value;
+			}
+			if (MainApplication::isArgGiven("-remote_port"))
+			{
+				remotePort = MainApplication::getArg("-remote_port").value;
+			}
+			Messaging::Client c1ient(remoteIpAdres, remotePort, robot);
+			Messaging::Message message(Model::Robot::MessageType::StartRequest,
+					"start");
+			c1ient.dispatchMessage(message);
+		}
 }
 /**
  *
@@ -382,8 +408,7 @@ void MainFrameWindow::OnStartListening(CommandEvent&UNUSEDPARAM(anEvent))
 void MainFrameWindow::OnSendMessage(CommandEvent&UNUSEDPARAM(anEvent))
 {
 	Application::Logger::log("trying to send message");
-	unsigned short RobotId = std::stoul(
-			Application::MainApplication::getArg("-robot").value);
+	unsigned short RobotId = std::stoul(Application::MainApplication::getArg("-robot").value);
 	Model::RobotPtr robot = Model::RobotWorld::getRobotWorld().getRobot(
 			RobotId);
 	if (robot)
@@ -428,7 +453,8 @@ void MainFrameWindow::OnStopListening(CommandEvent&UNUSEDPARAM(anEvent))
 
 void MainFrameWindow::onMerge(CommandEvent &anEvent)
 {
-	Model::RobotWorld::getRobotWorld().sendWalls(Model::Robot::MessageType::MergeRequest);
+	Model::RobotWorld::getRobotWorld().sendWalls(
+			Model::Robot::MessageType::MergeRequest);
 }
 
 } // namespace Application

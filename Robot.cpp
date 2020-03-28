@@ -392,6 +392,16 @@ void Robot::handleRequest(Messaging::Message &aMessage)
 			Model::RobotWorld::getRobotWorld().mergeWorlds(aMessage.getBody());
 			break;
 		}
+	case StartRequest:
+	{
+		Application::Logger::log("start test");
+		startActing();
+		break;
+	}
+	case Location:{
+		Application::Logger::log(aMessage.getBody());
+		break;
+	}
 	default:
 	{
 		Application::Logger::log(
@@ -459,6 +469,7 @@ void Robot::drive()
 {
 	try
 	{
+
 		for (std::shared_ptr<AbstractSensor> sensor : sensors)
 		{
 			//sensor->setOn();
@@ -473,6 +484,7 @@ void Robot::drive()
 		while (position.x > 0 && position.x < 500 && position.y > 0
 				&& position.y < 500 && pathPoint < path.size())
 		{
+			sendLocation();
 			const PathAlgorithm::Vertex &vertex = path[pathPoint +=
 					static_cast<int>(speed)];
 			front = BoundedVector(vertex.asPoint(), position);
@@ -510,6 +522,31 @@ void Robot::drive()
 	{
 		std::cerr << __PRETTY_FUNCTION__ << ": unknown exception" << std::endl;
 	}
+}
+/**
+ *
+ */
+void Robot::sendLocation(){
+	unsigned short RobotId = std::stoul(Application::MainApplication::getArg("-robot").value);
+			Model::RobotPtr robot = Model::RobotWorld::getRobotWorld().getRobot(
+					RobotId);
+			if (robot)
+			{
+				std::string remoteIpAdres = "localhost";
+				std::string remotePort = "12345";
+				if (Application::MainApplication::isArgGiven("-remote_ip"))
+				{
+					remoteIpAdres = Application::MainApplication::getArg("-remote_ip").value;
+				}
+				if (Application::MainApplication::isArgGiven("-remote_port"))
+				{
+					remotePort = Application::MainApplication::getArg("-remote_port").value;
+				}
+				Messaging::Client c1ient(remoteIpAdres, remotePort, robot);
+
+				Messaging::Message message(Model::Robot::MessageType::Location,asString());
+				c1ient.dispatchMessage(message);
+			}
 }
 /**
  *

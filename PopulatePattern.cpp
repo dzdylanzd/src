@@ -53,13 +53,14 @@ void PopulatePattern::PatternA()
 		Model::RobotWorld::getRobotWorld().newGoal("Goal P1", Point(450, 450), false);
 		//TODO: remove robot 2
 		Model::RobotWorld::getRobotWorld().newRobot("player2", Point(400, 450), false);
-		Model::RobotWorld::getRobotWorld().newGoal("Goal P2", Point(100, 50), false);
 	}
 	else if (robotID == 2)
 	{
 		Application::Logger::log("pattern A robot 2");
 		Model::RobotWorld::getRobotWorld().newRobot("player2", Point(400, 450), false);
 		Model::RobotWorld::getRobotWorld().newGoal("Goal P2", Point(100, 50), false);
+
+		Model::RobotWorld::getRobotWorld().newRobot("player1", Point(50, 50), false);
 	}
 }
 
@@ -72,13 +73,14 @@ void PopulatePattern::PatternB()
 		Model::RobotWorld::getRobotWorld().newGoal("Goal P1", Point(450, 450), false);
 		//TODO: remove robot 2
 		Model::RobotWorld::getRobotWorld().newRobot("player2", Point(450, 50), false);
-		Model::RobotWorld::getRobotWorld().newGoal("Goal P2", Point(50, 450), false);
 	}
 	else if (robotID == 2)
 	{
 		Application::Logger::log("pattern B robot 2");
 		Model::RobotWorld::getRobotWorld().newRobot("player2", Point(450, 50), false);
 		Model::RobotWorld::getRobotWorld().newGoal("Goal P2", Point(50, 450), false);
+
+		Model::RobotWorld::getRobotWorld().newGoal("Goal P1", Point(450, 450), false);
 	}
 }
 
@@ -92,8 +94,7 @@ void PopulatePattern::PatternC()
 		Model::RobotWorld::getRobotWorld().newWall(Point(0, 150), Point(300, 150));
 		//TODO: remove robot 2
 		Model::RobotWorld::getRobotWorld().newRobot("player2", Point(400, 450), false);
-		Model::RobotWorld::getRobotWorld().newGoal("Goal P2", Point(100, 50), false);
-		Model::RobotWorld::getRobotWorld().newWall(Point(200, 300), Point(500, 300));
+
 	}
 	else if (robotID == 2)
 	{
@@ -101,6 +102,8 @@ void PopulatePattern::PatternC()
 		Model::RobotWorld::getRobotWorld().newRobot("player2", Point(400, 450), false);
 		Model::RobotWorld::getRobotWorld().newGoal("Goal P2", Point(100, 50), false);
 		Model::RobotWorld::getRobotWorld().newWall(Point(200, 300), Point(500, 300));
+
+		Model::RobotWorld::getRobotWorld().newRobot("player1", Point(50, 50), false);
 	}
 }
 
