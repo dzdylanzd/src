@@ -175,11 +175,11 @@ RobotPtr RobotWorld::getRobot(const std::string &aName) const
 
 void RobotWorld::mergeWorlds(const std::string &wallData)
 {
-
+	unsigned short robotID = std::stoi(
+			Application::MainApplication::getArg("-robot").value);
 	std::string wallString = wallData;
-	Application::Logger::log(wallString);
 	std::regex mergeMessageExpression(
-			"^(Wall:\\s+\\((\\d+),+(\\d+)\\)\\s+-\\s+\\((\\d+),(\\d+)\\)\\s*)+$");
+			"^(Wall:\\s+\\(\\d+,\\d+\\)\\s+-\\s+\\(\\d+,\\d+\\)\\s*)+(Robot\\s+\\w+\\s+at\\s+\\(\\d+,\\d+\\)\\s*)$");
 
 	if (std::regex_match(wallString, mergeMessageExpression))
 	{
@@ -193,6 +193,28 @@ void RobotWorld::mergeWorlds(const std::string &wallData)
 			std::smatch matches = *i;
 			newWall(Point(std::stoi(matches[1]), std::stoi(matches[2])),
 					Point(std::stoi(matches[3]), std::stoi(matches[4])));
+		}
+
+		std::regex regexRobot("Robot\\s+(\\w+)\\s+at\\s+\\((\\d+),(\\d+)\\)");
+		for (std::sregex_iterator i(wallString.begin(), wallString.end(),
+				regexRobot); i != std::sregex_iterator(); ++i)
+		{
+			std::smatch matches = *i;
+			Application::Logger::log(matches[1]);
+
+			if(!getRobot(matches[1])){
+				newRobot(matches[1], Point(std::stoi(matches[2]), std::stoi(matches[3])), false);
+			}
+
+
+//			if (robotID == 1)
+//			{
+//				newRobot("player2", Point(50, 50), false);
+//			}
+//			else if (robotID == 2)
+//			{
+//				newRobot("player1", Point(50, 50), false);
+//			}
 		}
 	}
 }
@@ -210,11 +232,16 @@ void RobotWorld::sendMergeData(const Model::Robot::MessageType type)
 
 	std::stringstream os;
 
-	if(RobotId == 1){
-		os << sendData <<  Model::RobotWorld::getRobotWorld().getRobot(2)->asString();
+	if (RobotId == 1)
+	{
+		os << sendData
+				<< Model::RobotWorld::getRobotWorld().getRobot(2)->asString();
 		sendData = os.str();
-	}else if(RobotId == 2){
-		os << sendData <<  Model::RobotWorld::getRobotWorld().getRobot(1)->asString();
+	}
+	else if (RobotId == 2)
+	{
+		os << sendData
+				<< Model::RobotWorld::getRobotWorld().getRobot(1)->asString();
 		sendData = os.str();
 	}
 
@@ -234,8 +261,7 @@ void RobotWorld::sendMergeData(const Model::Robot::MessageType type)
 					Application::MainApplication::getArg("-remote_port").value;
 		}
 		Messaging::Client c1ient(remoteIpAdres, remotePort, robot);
-		Messaging::Message message(type,
-				sendData);
+		Messaging::Message message(type, sendData);
 		Application::Logger::log("trying to send message");
 		c1ient.dispatchMessage(message);
 	}
@@ -424,24 +450,28 @@ void RobotWorld::unpopulate(bool aNotifyObservers /*= true*/)
 /**
  * update other world
  */
-void RobotWorld::updateOtherRobot(const std::string& data){
+void RobotWorld::updateOtherRobot(const std::string &data)
+{
 
 	std::string robotString = data;
+	std::regex mergeMessageExpression(
+			"^(Robot\\s+\\w+\\s+at\\s+\\(\\d+,\\d+\\)\\s*)$");
 
-			std::regex regexWall(
-					"/\d+/g");
-			for (std::sregex_iterator i(robotString.begin(), robotString.end(),
-					regexWall); i != std::sregex_iterator(); ++i)
-			{
-				std::smatch matches = *i;
-				Application::Logger::log("match");
-				Application::Logger::log(matches[2]);
-				Application::Logger::log(matches[3]);
-			}
-
+	if (std::regex_match(data, mergeMessageExpression))
+	{
+	std::regex regexWall("Robot\\s+(\\w+)\\s+at\\s+\\((\\d+),(\\d+)\\)");
+	for (std::sregex_iterator i(robotString.begin(), robotString.end(),
+			regexWall); i != std::sregex_iterator(); ++i)
+	{
+		std::smatch matches = *i;
+		Application::Logger::log("match");
+		Application::Logger::log(matches[1]);
+		Application::Logger::log(matches[2]);
+		getRobot(matches[1])->setPosition(Point(std::stoi(matches[2]),std::stoi(matches[3])));
+	}
+	}
 
 }
-
 
 /**
  *
