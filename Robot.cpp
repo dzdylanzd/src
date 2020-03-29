@@ -381,7 +381,7 @@ void Robot::handleRequest(Messaging::Message &aMessage)
 	}
 	case MergeRequest:
 	{
-		Model::RobotWorld::getRobotWorld().sendWalls(
+		Model::RobotWorld::getRobotWorld().sendMergeData(
 				Robot::MessageType::MergeResponse);
 		Application::Logger::log(aMessage.getBody());
 		Model::RobotWorld::getRobotWorld().mergeWorlds(aMessage.getBody());

@@ -40,7 +40,7 @@ public:
 	 * sends the wall data to the other client
 	 * @pre there has to be a robot present
 	 */
-	void sendWalls(const Model::Robot::MessageType type);
+	void sendMergeData(const Model::Robot::MessageType type);
 	/**
 	 *
 	 * @return

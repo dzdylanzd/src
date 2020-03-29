@@ -453,7 +453,7 @@ void MainFrameWindow::OnStopListening(CommandEvent&UNUSEDPARAM(anEvent))
 
 void MainFrameWindow::onMerge(CommandEvent &anEvent)
 {
-	Model::RobotWorld::getRobotWorld().sendWalls(
+	Model::RobotWorld::getRobotWorld().sendMergeData(
 			Model::Robot::MessageType::MergeRequest);
 }
 

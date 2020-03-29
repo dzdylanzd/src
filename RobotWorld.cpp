@@ -200,12 +200,23 @@ void RobotWorld::mergeWorlds(const std::string &wallData)
  *
  */
 
-void RobotWorld::sendWalls(const Model::Robot::MessageType type)
+void RobotWorld::sendMergeData(const Model::Robot::MessageType type)
 {
 	unsigned short RobotId = std::stoul(
 			Application::MainApplication::getArg("-robot").value);
 	Model::RobotPtr robot = Model::RobotWorld::getRobotWorld().getRobot(
 			RobotId);
+	std::string sendData = Model::RobotWorld::getRobotWorld().getAllWallData();
+
+	std::stringstream os;
+
+	if(RobotId == 1){
+		os << sendData <<  Model::RobotWorld::getRobotWorld().getRobot(2)->asString();
+		sendData = os.str();
+	}else if(RobotId == 2){
+		os << sendData <<  Model::RobotWorld::getRobotWorld().getRobot(1)->asString();
+		sendData = os.str();
+	}
 
 	if (robot)
 	{
@@ -224,7 +235,7 @@ void RobotWorld::sendWalls(const Model::Robot::MessageType type)
 		}
 		Messaging::Client c1ient(remoteIpAdres, remotePort, robot);
 		Messaging::Message message(type,
-				Model::RobotWorld::getRobotWorld().getAllWallData());
+				sendData);
 		Application::Logger::log("trying to send message");
 		c1ient.dispatchMessage(message);
 	}
