@@ -23,7 +23,8 @@ namespace Model
  */
 Robot::Robot() :
 		name(""), size( DefaultSize), position( DefaultPosition), front(0, 0), speed(
-				0.0), acting(false), driving(false), communicating(false)
+				0.0), acting(false), driving(false), communicating(false), otherReady(
+				false)
 {
 	std::shared_ptr<AbstractSensor> laserSensor(new LaserDistanceSensor(this));
 	attachSensor(laserSensor);
@@ -34,7 +35,7 @@ Robot::Robot() :
 Robot::Robot(const std::string &aName) :
 		name(aName), size( DefaultSize), position( DefaultPosition), front(0,
 				0), speed(0.0), acting(false), driving(false), communicating(
-				false)
+				false), otherReady(false)
 {
 	std::shared_ptr<AbstractSensor> laserSensor(new LaserDistanceSensor(this));
 	attachSensor(laserSensor);
@@ -44,7 +45,8 @@ Robot::Robot(const std::string &aName) :
  */
 Robot::Robot(const std::string &aName, const Point &aPosition) :
 		name(aName), size( DefaultSize), position(aPosition), front(0, 0), speed(
-				0.0), acting(false), driving(false), communicating(false)
+				0.0), acting(false), driving(false), communicating(false), otherReady(
+				false)
 {
 	std::shared_ptr<AbstractSensor> laserSensor(new LaserDistanceSensor(this));
 	attachSensor(laserSensor);
@@ -182,7 +184,12 @@ void Robot::startDriving()
 		goal = RobotWorld::getRobotWorld().getGoal("Goal P2");
 	}
 	calculateRoute(goal);
+	sendReady();
+	while (!otherReady)
+	{
 
+	}
+	Application::Logger::log("ik ben vrij!!!!");
 	drive();
 }
 /**
@@ -401,7 +408,14 @@ void Robot::handleRequest(Messaging::Message &aMessage)
 	}
 	case Location:
 	{
+		Application::Logger::log(aMessage.getBody());
 		Model::RobotWorld::getRobotWorld().updateOtherRobot(aMessage.getBody());
+		break;
+	}
+	case ReadyToStart:
+	{
+		Application::Logger::log("ready to start");
+        otherReady = true;
 		break;
 	}
 	default:
@@ -486,7 +500,7 @@ void Robot::drive()
 		while (position.x > 0 && position.x < 500 && position.y > 0
 				&& position.y < 500 && pathPoint < path.size())
 		{
-			sendLocation();
+
 			const PathAlgorithm::Vertex &vertex = path[pathPoint +=
 					static_cast<int>(speed)];
 			front = BoundedVector(vertex.asPoint(), position);
@@ -511,6 +525,7 @@ void Robot::drive()
 			{
 				return;
 			}
+			sendLocation();
 		} // while
 
 		for (std::shared_ptr<AbstractSensor> sensor : sensors)
@@ -534,6 +549,7 @@ void Robot::sendLocation()
 			Application::MainApplication::getArg("-robot").value);
 	Model::RobotPtr robot = Model::RobotWorld::getRobotWorld().getRobot(
 			RobotId);
+	std::string sendString = asString() + front.asString();
 	if (robot)
 	{
 		std::string remoteIpAdres = "localhost";
@@ -551,7 +567,38 @@ void Robot::sendLocation()
 		Messaging::Client c1ient(remoteIpAdres, remotePort, robot);
 
 		Messaging::Message message(Model::Robot::MessageType::Location,
-				asString());
+				sendString);
+		c1ient.dispatchMessage(message);
+	}
+}
+/**
+ *
+ */
+void Robot::sendReady()
+{
+	unsigned short RobotId = std::stoul(
+			Application::MainApplication::getArg("-robot").value);
+	Model::RobotPtr robot = Model::RobotWorld::getRobotWorld().getRobot(
+			RobotId);
+	std::string sendString = "ready";
+	if (robot)
+	{
+		std::string remoteIpAdres = "localhost";
+		std::string remotePort = "12345";
+		if (Application::MainApplication::isArgGiven("-remote_ip"))
+		{
+			remoteIpAdres =
+					Application::MainApplication::getArg("-remote_ip").value;
+		}
+		if (Application::MainApplication::isArgGiven("-remote_port"))
+		{
+			remotePort =
+					Application::MainApplication::getArg("-remote_port").value;
+		}
+		Messaging::Client c1ient(remoteIpAdres, remotePort, robot);
+
+		Messaging::Message message(Model::Robot::MessageType::ReadyToStart,
+				sendString);
 		c1ient.dispatchMessage(message);
 	}
 }

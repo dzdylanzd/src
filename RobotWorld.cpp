@@ -202,19 +202,12 @@ void RobotWorld::mergeWorlds(const std::string &wallData)
 			std::smatch matches = *i;
 			Application::Logger::log(matches[1]);
 
-			if(!getRobot(matches[1])){
-				newRobot(matches[1], Point(std::stoi(matches[2]), std::stoi(matches[3])), false);
+			if (!getRobot(matches[1]))
+			{
+				newRobot(matches[1],
+						Point(std::stoi(matches[2]), std::stoi(matches[3])),
+						true);
 			}
-
-
-//			if (robotID == 1)
-//			{
-//				newRobot("player2", Point(50, 50), false);
-//			}
-//			else if (robotID == 2)
-//			{
-//				newRobot("player1", Point(50, 50), false);
-//			}
 		}
 	}
 }
@@ -455,20 +448,30 @@ void RobotWorld::updateOtherRobot(const std::string &data)
 
 	std::string robotString = data;
 	std::regex mergeMessageExpression(
-			"^(Robot\\s+\\w+\\s+at\\s+\\(\\d+,\\d+\\)\\s*)$");
+			"^Robot\\s+\\w+\\s+at\\s+\\(\\d+,\\d+\\)\\(-*\\d+,-*\\d+\\)\\s*$");
 
 	if (std::regex_match(data, mergeMessageExpression))
 	{
-	std::regex regexWall("Robot\\s+(\\w+)\\s+at\\s+\\((\\d+),(\\d+)\\)");
-	for (std::sregex_iterator i(robotString.begin(), robotString.end(),
-			regexWall); i != std::sregex_iterator(); ++i)
-	{
-		std::smatch matches = *i;
 		Application::Logger::log("match");
-		Application::Logger::log(matches[1]);
-		Application::Logger::log(matches[2]);
-		getRobot(matches[1])->setPosition(Point(std::stoi(matches[2]),std::stoi(matches[3])));
-	}
+		std::regex regexRobotPosition(
+				"Robot\\s+(\\w+)\\s+at\\s+\\((\\d+),(\\d+)\\)\\((-*\\d+),(-*\\d+)\\)\\s*");
+		for (std::sregex_iterator i(robotString.begin(), robotString.end(),
+				regexRobotPosition); i != std::sregex_iterator(); ++i)
+		{
+			std::smatch matches = *i;
+			Application::Logger::log("naam: ");
+			Application::Logger::log(matches[1]);
+			RobotPtr otherRobot = getRobot(matches[1]);
+			if (otherRobot)
+			{
+				otherRobot->setPosition(
+						Point(std::stoi(matches[2]), std::stoi(matches[3])));
+			getRobot(matches[1])->setFront(
+					BoundedVector(std::stod(matches[4]),
+							std::stod(matches[5])));
+			}
+
+		}
 	}
 
 }
