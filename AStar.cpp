@@ -65,7 +65,6 @@ std::vector<Vertex> GetNeighbours(const Vertex &aVertex,
 
 	Point A;
 	Point B;
-	Point robotPosition;
 	unsigned short robotID = std::stoi(
 			Application::MainApplication::getArg("-robot").value);
 	if (robotID == 1)

@@ -22,34 +22,37 @@ namespace Model
  *
  */
 Robot::Robot() :
-		name(""), size( DefaultSize), position( DefaultPosition), front(0, 0), speed(
+		name(""), size( 300,300), position( DefaultPosition), front(0, 0), speed(
 				0.0), acting(false), driving(false), communicating(false), otherReady(
 				false)
 {
 	std::shared_ptr<AbstractSensor> laserSensor(new LaserDistanceSensor(this));
 	attachSensor(laserSensor);
+	size * 10;
 }
 /**
  *
  */
 Robot::Robot(const std::string &aName) :
-		name(aName), size( DefaultSize), position( DefaultPosition), front(0,
+		name(aName), size(300,300), position( DefaultPosition), front(0,
 				0), speed(0.0), acting(false), driving(false), communicating(
 				false), otherReady(false)
 {
 	std::shared_ptr<AbstractSensor> laserSensor(new LaserDistanceSensor(this));
 	attachSensor(laserSensor);
+	size * 10;
 }
 /**
  *
  */
 Robot::Robot(const std::string &aName, const Point &aPosition) :
-		name(aName), size( DefaultSize), position(aPosition), front(0, 0), speed(
+		name(aName), size( 300,300), position(aPosition), front(0, 0), speed(
 				0.0), acting(false), driving(false), communicating(false), otherReady(
 				false)
 {
 	std::shared_ptr<AbstractSensor> laserSensor(new LaserDistanceSensor(this));
 	attachSensor(laserSensor);
+
 }
 /**
  *
@@ -172,11 +175,11 @@ void Robot::stopActing()
  */
 void Robot::startDriving()
 {
+	otherReady = false;
 	driving = true;
 	Application::Logger::log(name);
 	if (name == "player1")
 	{
-		Application::Logger::log("player 1 goal detectie");
 		goal = RobotWorld::getRobotWorld().getGoal("Goal P1");
 	}
 	else if (name == "player2")
@@ -189,7 +192,6 @@ void Robot::startDriving()
 	{
 
 	}
-	Application::Logger::log("ik ben vrij!!!!");
 	drive();
 }
 /**
@@ -408,14 +410,14 @@ void Robot::handleRequest(Messaging::Message &aMessage)
 	}
 	case Location:
 	{
-		Application::Logger::log(aMessage.getBody());
+
 		Model::RobotWorld::getRobotWorld().updateOtherRobot(aMessage.getBody());
 		break;
 	}
 	case ReadyToStart:
 	{
-		Application::Logger::log("ready to start");
-        otherReady = true;
+
+		otherReady = true;
 		break;
 	}
 	default:
@@ -501,13 +503,15 @@ void Robot::drive()
 				&& position.y < 500 && pathPoint < path.size())
 		{
 
+			sendLocation();
+
 			const PathAlgorithm::Vertex &vertex = path[pathPoint +=
 					static_cast<int>(speed)];
 			front = BoundedVector(vertex.asPoint(), position);
 			position.x = vertex.x;
 			position.y = vertex.y;
 
-			if (arrived(goal) || collision())
+			if (arrived(goal))
 			{
 				Application::Logger::log(
 						__PRETTY_FUNCTION__
@@ -518,15 +522,40 @@ void Robot::drive()
 
 			notifyObservers();
 
-			std::this_thread::sleep_for(std::chrono::milliseconds(100));
+			std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
 			// this should be the last thing in the loop
 			if (driving == false)
 			{
 				return;
 			}
-			sendLocation();
-			calculateRoute(goal);
+			Size originalSize = getSize();
+			size * 10;
+			notifyObservers();
+			Point A;
+			Point B;
+			unsigned short robotID = std::stoi(
+					Application::MainApplication::getArg("-robot").value);
+			if (robotID == 1)
+			{
+
+				Model::RobotWorld::getRobotWorld().getRobot("player2")->getFrontLeft();
+				B =
+						Model::RobotWorld::getRobotWorld().getRobot("player2")->getFrontRight();
+			}
+			else if (robotID == 2)
+			{
+				A =
+						Model::RobotWorld::getRobotWorld().getRobot("player1")->getFrontLeft();
+				B =
+						Model::RobotWorld::getRobotWorld().getRobot("player1")->getFrontRight();
+			}
+			if (Utils::Shape2DUtils::isOnLine(A, B, position, 300))
+			{
+				calculateRoute(goal);
+
+			}
+//			setSize(originalSize, true);
 		} // while
 
 		for (std::shared_ptr<AbstractSensor> sensor : sensors)

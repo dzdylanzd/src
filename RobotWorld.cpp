@@ -452,15 +452,12 @@ void RobotWorld::updateOtherRobot(const std::string &data)
 
 	if (std::regex_match(data, mergeMessageExpression))
 	{
-		Application::Logger::log("match");
 		std::regex regexRobotPosition(
 				"Robot\\s+(\\w+)\\s+at\\s+\\((\\d+),(\\d+)\\)\\((-*\\d+),(-*\\d+)\\)\\s*");
 		for (std::sregex_iterator i(robotString.begin(), robotString.end(),
 				regexRobotPosition); i != std::sregex_iterator(); ++i)
 		{
 			std::smatch matches = *i;
-			Application::Logger::log("naam: ");
-			Application::Logger::log(matches[1]);
 			RobotPtr otherRobot = getRobot(matches[1]);
 			if (otherRobot)
 			{
