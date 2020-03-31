@@ -526,6 +526,7 @@ void Robot::drive()
 				return;
 			}
 			sendLocation();
+			calculateRoute(goal);
 		} // while
 
 		for (std::shared_ptr<AbstractSensor> sensor : sensors)
