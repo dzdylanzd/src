@@ -22,37 +22,34 @@ namespace Model
  *
  */
 Robot::Robot() :
-		name(""), size( 300,300), position( DefaultPosition), front(0, 0), speed(
+		name(""), size( DefaultSize), position( DefaultPosition), front(0, 0), speed(
 				0.0), acting(false), driving(false), communicating(false), otherReady(
 				false)
 {
 	std::shared_ptr<AbstractSensor> laserSensor(new LaserDistanceSensor(this));
 	attachSensor(laserSensor);
-	size * 10;
 }
 /**
  *
  */
 Robot::Robot(const std::string &aName) :
-		name(aName), size(300,300), position( DefaultPosition), front(0,
+		name(aName), size( DefaultSize), position( DefaultPosition), front(0,
 				0), speed(0.0), acting(false), driving(false), communicating(
 				false), otherReady(false)
 {
 	std::shared_ptr<AbstractSensor> laserSensor(new LaserDistanceSensor(this));
 	attachSensor(laserSensor);
-	size * 10;
 }
 /**
  *
  */
 Robot::Robot(const std::string &aName, const Point &aPosition) :
-		name(aName), size( 300,300), position(aPosition), front(0, 0), speed(
+		name(aName), size( DefaultSize), position(aPosition), front(0, 0), speed(
 				0.0), acting(false), driving(false), communicating(false), otherReady(
 				false)
 {
 	std::shared_ptr<AbstractSensor> laserSensor(new LaserDistanceSensor(this));
 	attachSensor(laserSensor);
-
 }
 /**
  *
