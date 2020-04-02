@@ -170,26 +170,30 @@ void Robot::stopActing()
 /**
  *
  */
-void Robot::startDriving()
+void Robot::startDriving(std::string goalName)
 {
-	otherReady = false;
-	driving = true;
-	Application::Logger::log(name);
-	if (name == "player1")
+	if (goalName == "done")
 	{
-		goal = RobotWorld::getRobotWorld().getGoal("Goal P1");
-	}
-	else if (name == "player2")
-	{
-		goal = RobotWorld::getRobotWorld().getGoal("Goal P2");
-	}
-	calculateRoute(goal);
-	sendReady();
-	while (!otherReady)
-	{
+		sendReady();
+		driving = false;
 
 	}
-	drive();
+	else
+	{
+
+		otherReady = false;
+		driving = true;
+		OriginalGoal = RobotWorld::getRobotWorld().getGoal("goal");
+		goal = RobotWorld::getRobotWorld().getGoal(goalName);
+		homeGoal = RobotWorld::getRobotWorld().getGoal("home");
+		calculateRoute(goal);
+		sendReady();
+		while (!otherReady)
+		{
+
+		}
+		drive();
+	}
 }
 /**
  *
@@ -419,8 +423,8 @@ void Robot::handleRequest(Messaging::Message &aMessage)
 	}
 	default:
 	{
-		Application::Logger::log(
-				__PRETTY_FUNCTION__ + std::string(": default"));
+//		Application::Logger::log(
+//				__PRETTY_FUNCTION__ + std::string(": default"));
 
 		aMessage.setBody(" default  Goodbye cruel world!");
 		break;
@@ -494,67 +498,93 @@ void Robot::drive()
 		{
 			speed = 10.0;
 		}
-
-		unsigned pathPoint = 0;
-		while (position.x > 0 && position.x < 500 && position.y > 0
-				&& position.y < 500 && pathPoint < path.size())
+		while (driving)
 		{
 
-			sendLocation();
-
-			const PathAlgorithm::Vertex &vertex = path[pathPoint +=
-					static_cast<int>(speed)];
-			front = BoundedVector(vertex.asPoint(), position);
-			position.x = vertex.x;
-			position.y = vertex.y;
-
-			if (arrived(goal))
+			calculateRoute(goal);
+			unsigned pathPoint = 0;
+			while (position.x > 0 && position.x < 500 && position.y > 0
+					&& position.y < 500 && pathPoint < path.size())
 			{
-				Application::Logger::log(
-						__PRETTY_FUNCTION__
-								+ std::string(": arrived or collision"));
+				sendLocation();
+
+				const PathAlgorithm::Vertex &vertex = path[pathPoint +=
+						static_cast<int>(speed)];
+				front = BoundedVector(vertex.asPoint(), position);
+				position.x = vertex.x;
+				position.y = vertex.y;
+
+				if (arrived(goal))
+				{
+					if (goal->getName() == "home")
+					{
+						startDriving("goal");
+						Application::Logger::log("ik ben thuis");
+					}
+					else if (goal->getName() == "goal")
+					{
+						driving = false;
+						Application::Logger::log("ik ben klaar!!!!!");
+						while (true)
+						{
+							sendReady();
+						}
+						break;
+					}
+					else
+					{
+						Application::Logger::log("er gaat iets mis");
+					}
+
+				}
+
 				notifyObservers();
-				break;
-			}
+				Application::Logger::log("going to : " + goal->getName());
+				std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
-			notifyObservers();
+				// this should be the last thing in the loop
+				if (driving == false)
+				{
+					return;
+				}
+//			Size originalSize = getSize();
+//			size * 10;
+//			notifyObservers();
+//			Point A;
+//			Point B;
+//			unsigned short robotID = std::stoi(
+//					Application::MainApplication::getArg("-robot").value);
+//			if (robotID == 1)
+//			{
+//
+//				Model::RobotWorld::getRobotWorld().getRobot("player2")->getFrontLeft();
+//				B =
+//						Model::RobotWorld::getRobotWorld().getRobot("player2")->getFrontRight();
+//			}
+//			else if (robotID == 2)
+//			{
+//				A =
+//						Model::RobotWorld::getRobotWorld().getRobot("player1")->getFrontLeft();
+//				B =
+//						Model::RobotWorld::getRobotWorld().getRobot("player1")->getFrontRight();
+//			}
+//			if (Utils::Shape2DUtils::isOnLine(A, B, position, 300))
+//			{
+				startDriving(goal->getName());
+//		}
 
-			std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-
-			// this should be the last thing in the loop
-			if (driving == false)
-			{
-				return;
-			}
-			Size originalSize = getSize();
-			size * 10;
-			notifyObservers();
-			Point A;
-			Point B;
-			unsigned short robotID = std::stoi(
-					Application::MainApplication::getArg("-robot").value);
-			if (robotID == 1)
-			{
-
-				Model::RobotWorld::getRobotWorld().getRobot("player2")->getFrontLeft();
-				B =
-						Model::RobotWorld::getRobotWorld().getRobot("player2")->getFrontRight();
-			}
-			else if (robotID == 2)
-			{
-				A =
-						Model::RobotWorld::getRobotWorld().getRobot("player1")->getFrontLeft();
-				B =
-						Model::RobotWorld::getRobotWorld().getRobot("player1")->getFrontRight();
-			}
-			if (Utils::Shape2DUtils::isOnLine(A, B, position, 300))
-			{
-				calculateRoute(goal);
-
-			}
 //			setSize(originalSize, true);
-		} // while
+			} // while
+			Application::Logger::log("ik zit vast opweg naar huis");
+			startDriving("home");
 
+		}
+		while (true)
+		{
+			driving = false;
+			sendReady();
+			driving = false;
+		}
 		for (std::shared_ptr<AbstractSensor> sensor : sensors)
 		{
 			//sensor->setOff();
@@ -562,9 +592,11 @@ void Robot::drive()
 	} catch (std::exception &e)
 	{
 		std::cerr << __PRETTY_FUNCTION__ << ": " << e.what() << std::endl;
+		Application::Logger::log("er ging iets erg mis");
 	} catch (...)
 	{
 		std::cerr << __PRETTY_FUNCTION__ << ": unknown exception" << std::endl;
+		Application::Logger::log("er ging iets erg mis");
 	}
 }
 /**

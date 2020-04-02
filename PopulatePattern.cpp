@@ -50,14 +50,16 @@ void PopulatePattern::PatternA()
 	{
 		Application::Logger::log("pattern A robot 1");
 		Model::RobotWorld::getRobotWorld().newRobot("player1", Point(50, 50), false);
-		Model::RobotWorld::getRobotWorld().newGoal("Goal P1", Point(450, 450), false);
+		Model::RobotWorld::getRobotWorld().newGoal("goal", Point(450, 450), false);
+		Model::RobotWorld::getRobotWorld().newGoal("home",  Point(50, 50), false);
 
 	}
 	else if (robotID == 2)
 	{
 		Application::Logger::log("pattern A robot 2");
 		Model::RobotWorld::getRobotWorld().newRobot("player2", Point(400, 450), false);
-		Model::RobotWorld::getRobotWorld().newGoal("Goal P2", Point(100, 50), false);
+		Model::RobotWorld::getRobotWorld().newGoal("goal", Point(100, 50), false);
+		Model::RobotWorld::getRobotWorld().newGoal("home", Point(400, 450), false);
 
 	}
 }
@@ -67,15 +69,17 @@ void PopulatePattern::PatternB()
 	if (robotID == 1)
 	{
 		Application::Logger::log("pattern B robot 1");
-		Model::RobotWorld::getRobotWorld().newRobot("player1", Point(50, 50), false);
-		Model::RobotWorld::getRobotWorld().newGoal("Goal P1", Point(450, 450), false);
+		Model::RobotWorld::getRobotWorld().newGoal("home", Point(250, 50), false);
+		Model::RobotWorld::getRobotWorld().newRobot("player1", Point(250, 50), false);
+		Model::RobotWorld::getRobotWorld().newGoal("goal", Point(250, 450), false);
 
 	}
 	else if (robotID == 2)
 	{
 		Application::Logger::log("pattern B robot 2");
-		Model::RobotWorld::getRobotWorld().newRobot("player2", Point(450, 50), false);
-		Model::RobotWorld::getRobotWorld().newGoal("Goal P2", Point(50, 450), false);
+		Model::RobotWorld::getRobotWorld().newGoal("home", Point(50, 250), false);
+		Model::RobotWorld::getRobotWorld().newRobot("player2", Point(50, 250), false);
+		Model::RobotWorld::getRobotWorld().newGoal("goal", Point(450, 250), false);
 
 	}
 }

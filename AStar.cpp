@@ -65,21 +65,46 @@ std::vector<Vertex> GetNeighbours(const Vertex &aVertex,
 
 	Point A;
 	Point B;
+	Point robotPoints[8];
 	unsigned short robotID = std::stoi(
 			Application::MainApplication::getArg("-robot").value);
 	if (robotID == 1)
 	{
-		A =
+		robotPoints[0] =
 				Model::RobotWorld::getRobotWorld().getRobot("player2")->getFrontLeft();
-		B =
+		robotPoints[1] =
 				Model::RobotWorld::getRobotWorld().getRobot("player2")->getFrontRight();
+		robotPoints[2] =
+				Model::RobotWorld::getRobotWorld().getRobot("player2")->getBackRight();
+		robotPoints[3] =
+				Model::RobotWorld::getRobotWorld().getRobot("player2")->getFrontRight();
+		robotPoints[4] =
+				Model::RobotWorld::getRobotWorld().getRobot("player2")->getBackLeft();
+		robotPoints[5] =
+				Model::RobotWorld::getRobotWorld().getRobot("player2")->getFrontLeft();
+		robotPoints[4] =
+				Model::RobotWorld::getRobotWorld().getRobot("player2")->getBackLeft();
+		robotPoints[5] =
+				Model::RobotWorld::getRobotWorld().getRobot("player2")->getBackRight();
 	}
 	else if (robotID == 2)
 	{
-		A =
-					Model::RobotWorld::getRobotWorld().getRobot("player1")->getFrontLeft();
-			B =
-					Model::RobotWorld::getRobotWorld().getRobot("player1")->getFrontRight();
+		robotPoints[0] =
+				Model::RobotWorld::getRobotWorld().getRobot("player1")->getFrontLeft();
+		robotPoints[1] =
+				Model::RobotWorld::getRobotWorld().getRobot("player1")->getFrontRight();
+		robotPoints[2] =
+				Model::RobotWorld::getRobotWorld().getRobot("player1")->getBackRight();
+		robotPoints[3] =
+				Model::RobotWorld::getRobotWorld().getRobot("player1")->getFrontRight();
+		robotPoints[4] =
+				Model::RobotWorld::getRobotWorld().getRobot("player1")->getBackLeft();
+		robotPoints[5] =
+				Model::RobotWorld::getRobotWorld().getRobot("player1")->getFrontLeft();
+		robotPoints[4] =
+				Model::RobotWorld::getRobotWorld().getRobot("player1")->getBackLeft();
+		robotPoints[5] =
+				Model::RobotWorld::getRobotWorld().getRobot("player1")->getBackRight();
 	}
 
 	const std::vector<Model::WallPtr> &walls =
@@ -100,14 +125,15 @@ std::vector<Vertex> GetNeighbours(const Vertex &aVertex,
 				break;
 			}
 		}
-		if (Utils::Shape2DUtils::isOnLine(A, B, vertex.asPoint(), aFreeRadius))
-		{
-			addToNeigbours = false;
-			break;
-		}
-		else
-		{
-		}
+//		for (int i = 0; i < 8; i + 2)
+//		{
+			if (Utils::Shape2DUtils::isOnLine(robotPoints[0],
+					robotPoints[1], vertex.asPoint(), 30))
+			{
+				addToNeigbours = false;
+				break;
+			}
+//		}
 		if (addToNeigbours == true)
 		{
 			neighbours.push_back(vertex);

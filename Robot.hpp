@@ -126,7 +126,7 @@ public:
 	/**
 	 *
 	 */
-	virtual void startDriving();
+	virtual void startDriving(std::string goalName = "goal");
 	/**
 	 *
 	 */
@@ -280,6 +280,8 @@ private:
 	std::mutex setLock;
 
 	GoalPtr goal;
+	GoalPtr OriginalGoal;
+	GoalPtr homeGoal;
 	PathAlgorithm::AStar astar;
 	PathAlgorithm::Path path;
 
