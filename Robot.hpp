@@ -245,7 +245,8 @@ public:
 		MergeResponse,
 		StartRequest,
 		Location,
-		ReadyToStart
+		ReadyToStart,
+		Done
 	};
 
 protected:
@@ -266,9 +267,11 @@ protected:
 	 */
 	bool collision();
 private:
+	void sendDone();
 	void sendLocation();
 	void sendReady();
 
+	bool otherDone = false;
 	bool otherReady;
 	std::string name;
 

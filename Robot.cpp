@@ -172,28 +172,22 @@ void Robot::stopActing()
  */
 void Robot::startDriving(std::string goalName)
 {
-	if (goalName == "done")
-	{
-		sendReady();
-		driving = false;
 
-	}
-	else
+	otherReady = false;
+	driving = true;
+	OriginalGoal = RobotWorld::getRobotWorld().getGoal("goal");
+	goal = RobotWorld::getRobotWorld().getGoal(goalName);
+	homeGoal = RobotWorld::getRobotWorld().getGoal("home");
+	calculateRoute(goal);
+	sendReady();
+	while (!otherReady)
 	{
-
-		otherReady = false;
-		driving = true;
-		OriginalGoal = RobotWorld::getRobotWorld().getGoal("goal");
-		goal = RobotWorld::getRobotWorld().getGoal(goalName);
-		homeGoal = RobotWorld::getRobotWorld().getGoal("home");
-		calculateRoute(goal);
-		sendReady();
-		while (!otherReady)
+		if (otherDone == true)
 		{
-
+			break;
 		}
-		drive();
 	}
+	drive();
 }
 /**
  *
@@ -421,13 +415,10 @@ void Robot::handleRequest(Messaging::Message &aMessage)
 		otherReady = true;
 		break;
 	}
-	default:
+	case Done:
 	{
-//		Application::Logger::log(
-//				__PRETTY_FUNCTION__ + std::string(": default"));
-
-		aMessage.setBody(" default  Goodbye cruel world!");
-		break;
+		Application::Logger::log("DE ANDERE IS KLAAR");
+		otherDone = true;
 	}
 	}
 }
@@ -525,11 +516,10 @@ void Robot::drive()
 					{
 						driving = false;
 						Application::Logger::log("ik ben klaar!!!!!");
-						while (true)
-						{
-							sendReady();
-						}
+						sendDone();
+						stopActing();
 						break;
+						return;
 					}
 					else
 					{
@@ -537,53 +527,23 @@ void Robot::drive()
 					}
 
 				}
-
+				std::this_thread::sleep_for(std::chrono::milliseconds(100));
 				notifyObservers();
 				Application::Logger::log("going to : " + goal->getName());
-				std::this_thread::sleep_for(std::chrono::milliseconds(100));
+				startDriving(goal->getName());
 
 				// this should be the last thing in the loop
 				if (driving == false)
 				{
 					return;
 				}
-//			Size originalSize = getSize();
-//			size * 10;
-//			notifyObservers();
-//			Point A;
-//			Point B;
-//			unsigned short robotID = std::stoi(
-//					Application::MainApplication::getArg("-robot").value);
-//			if (robotID == 1)
-//			{
-//
-//				Model::RobotWorld::getRobotWorld().getRobot("player2")->getFrontLeft();
-//				B =
-//						Model::RobotWorld::getRobotWorld().getRobot("player2")->getFrontRight();
-//			}
-//			else if (robotID == 2)
-//			{
-//				A =
-//						Model::RobotWorld::getRobotWorld().getRobot("player1")->getFrontLeft();
-//				B =
-//						Model::RobotWorld::getRobotWorld().getRobot("player1")->getFrontRight();
-//			}
-//			if (Utils::Shape2DUtils::isOnLine(A, B, position, 300))
-//			{
-				startDriving(goal->getName());
-//		}
 
-//			setSize(originalSize, true);
 			} // while
 			Application::Logger::log("ik zit vast opweg naar huis");
 			startDriving("home");
+			front.reverse();
+			notifyObservers();
 
-		}
-		while (true)
-		{
-			driving = false;
-			sendReady();
-			driving = false;
 		}
 		for (std::shared_ptr<AbstractSensor> sensor : sensors)
 		{
@@ -627,6 +587,35 @@ void Robot::sendLocation()
 
 		Messaging::Message message(Model::Robot::MessageType::Location,
 				sendString);
+		c1ient.dispatchMessage(message);
+	}
+}
+/**
+ *
+ */
+void Robot::sendDone()
+{
+	unsigned short RobotId = std::stoul(
+			Application::MainApplication::getArg("-robot").value);
+	Model::RobotPtr robot = Model::RobotWorld::getRobotWorld().getRobot(
+			RobotId);
+	if (robot)
+	{
+		std::string remoteIpAdres = "localhost";
+		std::string remotePort = "12345";
+		if (Application::MainApplication::isArgGiven("-remote_ip"))
+		{
+			remoteIpAdres =
+					Application::MainApplication::getArg("-remote_ip").value;
+		}
+		if (Application::MainApplication::isArgGiven("-remote_port"))
+		{
+			remotePort =
+					Application::MainApplication::getArg("-remote_port").value;
+		}
+		Messaging::Client c1ient(remoteIpAdres, remotePort, robot);
+
+		Messaging::Message message(Model::Robot::MessageType::Done, "done");
 		c1ient.dispatchMessage(message);
 	}
 }
