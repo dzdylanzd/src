@@ -250,7 +250,10 @@ public:
 		StartRequest,
 		Location,
 		ReadyToStart,
-		Done
+		Done,
+		GoingHome,
+		AtHome,
+		PathToGoalState
 	};
 
 protected:
@@ -274,9 +277,14 @@ private:
 	void sendDone();
 	void sendLocation();
 	void sendReady();
+	void sendGoingHome();
+	void sendHome();
+	void sendPathToGoalState(bool state);
 
 	bool otherDone = false;
 	bool otherReady;
+	bool otherHasPathToGoal = false;
+	bool otherGoingHome = false;
 	std::string name;
 
 	Size size;
