@@ -9,6 +9,8 @@
 #include "Logger.hpp"
 #include "RobotWorld.hpp"
 #include "Robot.hpp"
+#include "BoundedVector.hpp"
+
 
 PopulatePattern::PopulatePattern(const unsigned short aRobotID) :
 		robotID(aRobotID)
@@ -49,17 +51,18 @@ void PopulatePattern::PatternA()
 	if (robotID == 1)
 	{
 		Application::Logger::log("pattern A robot 1");
-		Model::RobotWorld::getRobotWorld().newRobot("player1", Point(50, 50), false);
-		Model::RobotWorld::getRobotWorld().newGoal("goal", Point(450, 450), false);
-		Model::RobotWorld::getRobotWorld().newGoal("home",  Point(50, 50), false);
+		Model::RobotWorld::getRobotWorld().newRobot("player1", Point(100, 200), false);
+		Model::RobotWorld::getRobotWorld().newGoal("home", Point(100, 200), false);
+		Model::RobotWorld::getRobotWorld().newGoal("goal", Point(400, 300), true);
 
 	}
 	else if (robotID == 2)
 	{
 		Application::Logger::log("pattern A robot 2");
-		Model::RobotWorld::getRobotWorld().newRobot("player2", Point(400, 450), false);
-		Model::RobotWorld::getRobotWorld().newGoal("goal", Point(100, 50), false);
-		Model::RobotWorld::getRobotWorld().newGoal("home", Point(400, 450), false);
+		Model::RobotWorld::getRobotWorld().newRobot("player2", Point(300, 400), false);
+		Model::RobotWorld::getRobotWorld().newGoal("goal", Point(200, 100), false);
+		Model::RobotWorld::getRobotWorld().newGoal("home", Point(300, 400), true);
+		Model::RobotWorld::getRobotWorld().getRobot("player2")->setFront(Model::BoundedVector(Point(100, 50),Point(400, 450)));
 
 	}
 }
@@ -90,7 +93,8 @@ void PopulatePattern::PatternC()
 	{
 		Application::Logger::log("pattern C robot 1");
 		Model::RobotWorld::getRobotWorld().newRobot("player1", Point(50, 50), false);
-		Model::RobotWorld::getRobotWorld().newGoal("Goal P1", Point(450, 450), false);
+		Model::RobotWorld::getRobotWorld().newGoal("home", Point(50, 50), false);
+		Model::RobotWorld::getRobotWorld().newGoal("goal", Point(450, 450), false);
 		Model::RobotWorld::getRobotWorld().newWall(Point(0, 150), Point(300, 150));
 
 
@@ -99,7 +103,8 @@ void PopulatePattern::PatternC()
 	{
 		Application::Logger::log("pattern C robot 2");
 		Model::RobotWorld::getRobotWorld().newRobot("player2", Point(400, 450), false);
-		Model::RobotWorld::getRobotWorld().newGoal("Goal P2", Point(100, 50), false);
+		Model::RobotWorld::getRobotWorld().newGoal("home", Point(400, 450), false);
+		Model::RobotWorld::getRobotWorld().newGoal("goal", Point(100, 50), false);
 		Model::RobotWorld::getRobotWorld().newWall(Point(200, 300), Point(500, 300));
 
 	}

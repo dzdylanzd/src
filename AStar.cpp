@@ -119,7 +119,7 @@ std::vector<Vertex> GetNeighbours(const Vertex &aVertex,
 		for (Model::WallPtr wall : walls)
 		{
 			if (Utils::Shape2DUtils::isOnLine(wall->getPoint1(),
-					wall->getPoint2(), vertex.asPoint(), aFreeRadius))
+					wall->getPoint2(), vertex.asPoint(), 40))
 			{
 				addToNeigbours = false;
 				break;
@@ -128,7 +128,7 @@ std::vector<Vertex> GetNeighbours(const Vertex &aVertex,
 //		for (int i = 0; i < 8; i + 2)
 //		{
 			if (Utils::Shape2DUtils::isOnLine(robotPoints[0],
-					robotPoints[1], vertex.asPoint(), 30))
+					robotPoints[1], vertex.asPoint(), 60))
 			{
 				addToNeigbours = false;
 				break;

@@ -463,9 +463,9 @@ void RobotWorld::updateOtherRobot(const std::string &data)
 			{
 				otherRobot->setPosition(
 						Point(std::stoi(matches[2]), std::stoi(matches[3])));
-			getRobot(matches[1])->setFront(
-					BoundedVector(std::stod(matches[4]),
-							std::stod(matches[5])));
+				otherRobot->setFront(
+						BoundedVector(std::stod(matches[4]),
+								std::stod(matches[5])));
 			}
 
 		}

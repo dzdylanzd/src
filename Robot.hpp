@@ -52,6 +52,10 @@ public:
 	/**
 	 *
 	 */
+	Robot(const Robot& aRobot) = delete;
+	/**
+	 *
+	 */
 	virtual ~Robot();
 	/**
 	 *

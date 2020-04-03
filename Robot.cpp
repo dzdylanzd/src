@@ -182,7 +182,7 @@ void Robot::startDriving(std::string goalName)
 	sendReady();
 	while (!otherReady)
 	{
-		if (otherDone == true)
+		if (otherDone)
 		{
 			break;
 		}
@@ -501,9 +501,10 @@ void Robot::drive()
 
 				const PathAlgorithm::Vertex &vertex = path[pathPoint +=
 						static_cast<int>(speed)];
-				front = BoundedVector(vertex.asPoint(), position);
+				setFront(BoundedVector(vertex.asPoint(), position));
 				position.x = vertex.x;
 				position.y = vertex.y;
+				notifyObservers();
 
 				if (arrived(goal))
 				{
@@ -519,7 +520,7 @@ void Robot::drive()
 						sendDone();
 						stopActing();
 						break;
-						return;
+
 					}
 					else
 					{
@@ -528,10 +529,7 @@ void Robot::drive()
 
 				}
 				std::this_thread::sleep_for(std::chrono::milliseconds(100));
-				notifyObservers();
-				Application::Logger::log("going to : " + goal->getName());
 				startDriving(goal->getName());
-
 				// this should be the last thing in the loop
 				if (driving == false)
 				{
@@ -539,10 +537,7 @@ void Robot::drive()
 				}
 
 			} // while
-			Application::Logger::log("ik zit vast opweg naar huis");
 			startDriving("home");
-			front.reverse();
-			notifyObservers();
 
 		}
 		for (std::shared_ptr<AbstractSensor> sensor : sensors)
@@ -658,15 +653,13 @@ void Robot::calculateRoute(GoalPtr aGoal)
 	path.clear();
 	if (aGoal)
 	{
-		// Turn off logging if not debugging AStar
 		Application::Logger::setDisable();
-
-		front = BoundedVector(aGoal->getPosition(), position);
-		handleNotificationsFor(astar);
+//		handleNotificationsFor(astar);
 		path = astar.search(position, aGoal->getPosition(), size);
-		stopHandlingNotificationsFor(astar);
+//		stopHandlingNotificationsFor(astar);
 
 		Application::Logger::setDisable(false);
+
 	}
 }
 /**
