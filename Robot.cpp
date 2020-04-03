@@ -503,6 +503,7 @@ void Robot::drive()
 			while (position.x > 0 && position.x < 500 && position.y > 0
 					&& position.y < 500 && pathPoint < path.size())
 			{
+				speed = 1;
 				otherReady = false;
 				sendReady();
 				sendLocation();
@@ -635,18 +636,17 @@ void Robot::drive()
 			} // while
 			sendReady();
 			calculateRoute(goal);
-//			if (!((position.x > 0 && position.x < 500 && position.y > 0
-//					&& position.y < 500 && pathPoint < path.size()))
-//					&& !otherHasPathToGoal && name == "player1")
-//			{
-//				startDriving("home");
-//				sendGoingHome();
-//				front.reverse();
-//			}
-//			while (otherGoingHome)
-//			{
-//				sendReady();
-//			}
+			std::this_thread::sleep_for(std::chrono::milliseconds(100));
+			if (name == "player1")
+			{
+				setFront(
+						BoundedVector(
+								Model::RobotWorld::getRobotWorld().getGoal(
+										"home")->getPosition(), position));
+				position = getFrontLeft();
+				startDriving("home");
+				sendGoingHome();
+			}
 
 		}
 		for (std::shared_ptr<AbstractSensor> sensor : sensors)
