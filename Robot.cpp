@@ -445,13 +445,6 @@ void Robot::handleResponse(const Messaging::Message &aMessage)
 
 		break;
 	}
-	default:
-	{
-		Application::Logger::log(
-				__PRETTY_FUNCTION__ + std::string(": default not implemented, ")
-						+ aMessage.asString());
-		break;
-	}
 	}
 }
 /**
@@ -570,7 +563,6 @@ void Robot::drive()
 					if (Utils::Shape2DUtils::isOnLine(robotPoints[i],
 							robotPoints[i + 1], position, 30))
 					{
-						Application::Logger::log("robort in the way");
 						calculateRoute(goal);
 						pathPoint = 0;
 					}
@@ -584,7 +576,7 @@ void Robot::drive()
 					setFront(BoundedVector(vertex.asPoint(), position));
 					position.x = vertex.x;
 					position.y = vertex.y;
-					Application::Logger::log("stap");
+
 					notifyObservers();
 					sendPathToGoalState(true);
 				}
@@ -623,10 +615,8 @@ void Robot::drive()
 					{
 						break;
 					}
-					Application::Logger::log("aan het wachten");
-					std::this_thread::sleep_for(std::chrono::milliseconds(100));
 				}
-				std::this_thread::sleep_for(std::chrono::milliseconds(100));
+				std::this_thread::sleep_for(std::chrono::milliseconds(30));
 				// this should be the last thing in the loop
 				if (driving == false)
 				{
@@ -636,7 +626,7 @@ void Robot::drive()
 			} // while
 			sendReady();
 			calculateRoute(goal);
-			std::this_thread::sleep_for(std::chrono::milliseconds(100));
+			std::this_thread::sleep_for(std::chrono::milliseconds(30));
 			if (name == "player1")
 			{
 				setFront(
@@ -823,9 +813,9 @@ void Robot::calculateRoute(GoalPtr aGoal)
 	if (aGoal)
 	{
 		Application::Logger::setDisable();
-		handleNotificationsFor(astar);
+//		handleNotificationsFor(astar);
 		path = astar.search(position, aGoal->getPosition(), size);
-		stopHandlingNotificationsFor(astar);
+//		stopHandlingNotificationsFor(astar);
 
 		Application::Logger::setDisable(false);
 
