@@ -303,6 +303,13 @@ private:
 	 */
 	void sendReady();
 
+	/**
+	 * set one step towards home
+	 */
+	void stepTowardHome();
+
+
+
 	bool otherDone = false;
 	bool otherReady;
 	bool otherHasPathToGoal = false;

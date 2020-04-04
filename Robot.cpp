@@ -488,7 +488,8 @@ void Robot::drive()
 		while (driving)
 		{
 			unsigned long pathPoint = 0;
-			while (position.x > 0 && position.x < 500 && position.y > 0 && position.y < 500 && pathPoint < path.size())
+			while (position.x > 0 && position.x < 500 && position.y > 0
+					&& position.y < 500 && pathPoint < path.size())
 			{
 				otherReady = false;
 				sendReady();
@@ -505,7 +506,8 @@ void Robot::drive()
 				if (pathPoint < path.size())
 				{
 					// Move the robot 1 step over the path
-					const PathAlgorithm::Vertex &vertex = path[pathPoint += static_cast<int>(speed)];
+					const PathAlgorithm::Vertex &vertex = path[pathPoint +=
+							static_cast<int>(speed)];
 					setFront(BoundedVector(vertex.asPoint(), position));
 					position.x = vertex.x;
 					position.y = vertex.y;
@@ -518,13 +520,16 @@ void Robot::drive()
 					if (goal->getName() == "home")
 					{
 						startDriving("goal");
-						Application::Logger::log(name + ": has reached its home.");
+						Application::Logger::log(
+								name + ": has reached its home.");
 					}
 					else if (goal->getName() == "goal")
 					{
 						driving = false;
-						Application::Logger::log(name + ": has reached its goal.");
-						std::this_thread::sleep_for(std::chrono::milliseconds(30));
+						Application::Logger::log(
+								name + ": has reached its goal.");
+						std::this_thread::sleep_for(
+								std::chrono::milliseconds(30));
 						sendDone();
 						stopActing();
 						break;
@@ -556,18 +561,19 @@ void Robot::drive()
 
 			if (name == "player1")
 			{
-				setFront(BoundedVector(Model::RobotWorld::getRobotWorld().getGoal("home")->getPosition(), position));
+				setFront(
+						BoundedVector(
+								Model::RobotWorld::getRobotWorld().getGoal(
+										"home")->getPosition(), position));
 				position = getFrontLeft();
 				startDriving("home");
 			}
 		}
-	}
-	catch (std::exception &e)
+	} catch (std::exception &e)
 	{
 		std::cerr << __PRETTY_FUNCTION__ << ": " << e.what() << std::endl;
 		Application::Logger::log("er ging iets erg mis");
-	}
-	catch (...)
+	} catch (...)
 	{
 		std::cerr << __PRETTY_FUNCTION__ << ": unknown exception" << std::endl;
 		Application::Logger::log("er ging iets erg mis");
@@ -578,7 +584,8 @@ void Robot::drive()
  */
 void Robot::sendLocation()
 {
-	sendMessage(Model::Robot::MessageType::Location, asString() + front.asString());
+	sendMessage(Model::Robot::MessageType::Location,
+			asString() + front.asString());
 }
 /**
  *
@@ -586,24 +593,28 @@ void Robot::sendLocation()
 void Robot::sendDone()
 {
 	// This part of the code needs to be repeated otherwise the message does not get sent
-    unsigned short RobotId = std::stoul(Application::MainApplication::getArg("-robot").value);
-    Model::RobotPtr robot = Model::RobotWorld::getRobotWorld().getRobot(RobotId);
-    if (robot)
-    {
-        std::string remoteIpAdres = "localhost";
-        std::string remotePort = "12345";
-        if (Application::MainApplication::isArgGiven("-remote_ip"))
-        {
-            remoteIpAdres = Application::MainApplication::getArg("-remote_ip").value;
-        }
-        if (Application::MainApplication::isArgGiven("-remote_port"))
-        {
-            remotePort = Application::MainApplication::getArg("-remote_port").value;
-        }
-        Messaging::Client client(remoteIpAdres, remotePort, robot);
-        Messaging::Message message(Model::Robot::MessageType::Done, "done");
-        client.dispatchMessage(message);
-    }
+	unsigned short RobotId = std::stoul(
+			Application::MainApplication::getArg("-robot").value);
+	Model::RobotPtr robot = Model::RobotWorld::getRobotWorld().getRobot(
+			RobotId);
+	if (robot)
+	{
+		std::string remoteIpAdres = "localhost";
+		std::string remotePort = "12345";
+		if (Application::MainApplication::isArgGiven("-remote_ip"))
+		{
+			remoteIpAdres =
+					Application::MainApplication::getArg("-remote_ip").value;
+		}
+		if (Application::MainApplication::isArgGiven("-remote_port"))
+		{
+			remotePort =
+					Application::MainApplication::getArg("-remote_port").value;
+		}
+		Messaging::Client client(remoteIpAdres, remotePort, robot);
+		Messaging::Message message(Model::Robot::MessageType::Done, "done");
+		client.dispatchMessage(message);
+	}
 }
 /**
  *
@@ -637,7 +648,6 @@ bool Robot::arrived(GoalPtr aGoal)
 	return false;
 }
 
-
 bool Robot::collision()
 {
 	Point frontLeft = getFrontLeft();
@@ -667,32 +677,50 @@ bool Robot::detectedOtherRobot()
 {
 	//Make an array for the robot points
 	Point robotPoints[8];
-	unsigned short robotID = std::stoi(Application::MainApplication::getArg("-robot").value);
+	unsigned short robotID = std::stoi(
+			Application::MainApplication::getArg("-robot").value);
 	if (robotID == 1)
 	{
-		robotPoints[0] = Model::RobotWorld::getRobotWorld().getRobot("player2")->getFrontLeft();
-		robotPoints[1] = Model::RobotWorld::getRobotWorld().getRobot("player2")->getFrontRight();
-		robotPoints[2] = Model::RobotWorld::getRobotWorld().getRobot("player2")->getBackRight();
-		robotPoints[3] = Model::RobotWorld::getRobotWorld().getRobot("player2")->getFrontRight();
-		robotPoints[4] = Model::RobotWorld::getRobotWorld().getRobot("player2")->getBackLeft();
-		robotPoints[5] = Model::RobotWorld::getRobotWorld().getRobot("player2")->getFrontLeft();
-		robotPoints[6] = Model::RobotWorld::getRobotWorld().getRobot("player2")->getBackLeft();
-		robotPoints[7] = Model::RobotWorld::getRobotWorld().getRobot("player2")->getBackRight();
+		robotPoints[0] =
+				Model::RobotWorld::getRobotWorld().getRobot("player2")->getFrontLeft();
+		robotPoints[1] =
+				Model::RobotWorld::getRobotWorld().getRobot("player2")->getFrontRight();
+		robotPoints[2] =
+				Model::RobotWorld::getRobotWorld().getRobot("player2")->getBackRight();
+		robotPoints[3] =
+				Model::RobotWorld::getRobotWorld().getRobot("player2")->getFrontRight();
+		robotPoints[4] =
+				Model::RobotWorld::getRobotWorld().getRobot("player2")->getBackLeft();
+		robotPoints[5] =
+				Model::RobotWorld::getRobotWorld().getRobot("player2")->getFrontLeft();
+		robotPoints[6] =
+				Model::RobotWorld::getRobotWorld().getRobot("player2")->getBackLeft();
+		robotPoints[7] =
+				Model::RobotWorld::getRobotWorld().getRobot("player2")->getBackRight();
 	}
 	else if (robotID == 2)
 	{
-		robotPoints[0] = Model::RobotWorld::getRobotWorld().getRobot("player1")->getFrontLeft();
-		robotPoints[1] = Model::RobotWorld::getRobotWorld().getRobot("player1")->getFrontRight();
-		robotPoints[2] = Model::RobotWorld::getRobotWorld().getRobot("player1")->getBackRight();
-		robotPoints[3] = Model::RobotWorld::getRobotWorld().getRobot("player1")->getFrontRight();
-		robotPoints[4] = Model::RobotWorld::getRobotWorld().getRobot("player1")->getBackLeft();
-		robotPoints[5] = Model::RobotWorld::getRobotWorld().getRobot("player1")->getFrontLeft();
-		robotPoints[6] = Model::RobotWorld::getRobotWorld().getRobot("player1")->getBackLeft();
-		robotPoints[7] = Model::RobotWorld::getRobotWorld().getRobot("player1")->getBackRight();
+		robotPoints[0] =
+				Model::RobotWorld::getRobotWorld().getRobot("player1")->getFrontLeft();
+		robotPoints[1] =
+				Model::RobotWorld::getRobotWorld().getRobot("player1")->getFrontRight();
+		robotPoints[2] =
+				Model::RobotWorld::getRobotWorld().getRobot("player1")->getBackRight();
+		robotPoints[3] =
+				Model::RobotWorld::getRobotWorld().getRobot("player1")->getFrontRight();
+		robotPoints[4] =
+				Model::RobotWorld::getRobotWorld().getRobot("player1")->getBackLeft();
+		robotPoints[5] =
+				Model::RobotWorld::getRobotWorld().getRobot("player1")->getFrontLeft();
+		robotPoints[6] =
+				Model::RobotWorld::getRobotWorld().getRobot("player1")->getBackLeft();
+		robotPoints[7] =
+				Model::RobotWorld::getRobotWorld().getRobot("player1")->getBackRight();
 	}
 	for (int i = 0; i < 8; i = i + 2)
 	{
-		if (Utils::Shape2DUtils::isOnLine(robotPoints[i], robotPoints[i + 1], position, 50))
+		if (Utils::Shape2DUtils::isOnLine(robotPoints[i], robotPoints[i + 1],
+				position, 50))
 		{
 			return true;
 		}
@@ -702,10 +730,13 @@ bool Robot::detectedOtherRobot()
 /**
  *
  */
-void Robot::sendMessage(const Robot::MessageType type, const std::string& messageBody)
+void Robot::sendMessage(const Robot::MessageType type,
+		const std::string &messageBody)
 {
-	unsigned short RobotId = std::stoul(Application::MainApplication::getArg("-robot").value);
-	Model::RobotPtr robot = Model::RobotWorld::getRobotWorld().getRobot(RobotId);
+	unsigned short RobotId = std::stoul(
+			Application::MainApplication::getArg("-robot").value);
+	Model::RobotPtr robot = Model::RobotWorld::getRobotWorld().getRobot(
+			RobotId);
 	if (robot)
 	{
 		// Defaults
@@ -713,17 +744,44 @@ void Robot::sendMessage(const Robot::MessageType type, const std::string& messag
 		std::string remotePort = "12345";
 		if (Application::MainApplication::isArgGiven("-remote_ip"))
 		{
-				remoteIpAdres = Application::MainApplication::getArg("-remote_ip").value;
+			remoteIpAdres =
+					Application::MainApplication::getArg("-remote_ip").value;
 		}
 		if (Application::MainApplication::isArgGiven("-remote_port"))
 		{
-				remotePort = Application::MainApplication::getArg("-remote_port").value;
+			remotePort =
+					Application::MainApplication::getArg("-remote_port").value;
 		}
 
 		// Create a client and message to send the message
 		Messaging::Client client(remoteIpAdres, remotePort, robot);
 		Messaging::Message message(type, messageBody);
 		client.dispatchMessage(message);
+	}
+}
+
+void Robot::stepTowardHome()
+{
+	Point homePoint =
+			Model::RobotWorld::getRobotWorld().getGoal("home")->getPosition();
+	float deltaY = position.y - homePoint.y;
+	float deltaX = position.x - homePoint.x;
+	float richtingscoefficient = deltaY / deltaX;
+	float beginGetal = position.y - (position.x * richtingscoefficient);
+
+	float newX = 0;
+	if (position.x > homePoint.x)
+	{
+		newX = (position.x - (float) speed);
+	}
+	else if (position.x < homePoint.x)
+	{
+		newX = (position.x + (float) speed);
+	}
+	if (newX != 0)
+	{
+		unsigned long newY = (newX * richtingscoefficient + beginGetal);
+		position = Point(newX, newY);
 	}
 }
 
