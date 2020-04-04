@@ -274,12 +274,34 @@ protected:
 	 */
 	bool collision();
 private:
+	/**
+	 * Function to detect another robot in this robots range
+	 *
+	 * @return false (bool): if no robot is detected
+	 * @return true (bool): if an robot is detected
+	 */
+	bool detectedOtherRobot();
+	/**
+	 * Send a message
+	 *
+	 * @param type (MessageType): the message type
+	 * @param messageBody (string): the message body
+	 */
+	void sendMessage(const MessageType type, const std::string& messageBody);
+	/**
+	 * Send a done message;
+	 *
+	 * @pre robot has reached its goal
+	 */
 	void sendDone();
+	/**
+	 * Send a location message
+	 */
 	void sendLocation();
+	/**
+	 * send a i am ready to move message
+	 */
 	void sendReady();
-	void sendGoingHome();
-	void sendHome();
-	void sendPathToGoalState(bool state);
 
 	bool otherDone = false;
 	bool otherReady;
