@@ -692,7 +692,7 @@ bool Robot::detectedOtherRobot()
 	}
 	for (int i = 0; i < 8; i = i + 2)
 	{
-		if (Utils::Shape2DUtils::isOnLine(robotPoints[i], robotPoints[i + 1], position, 30))
+		if (Utils::Shape2DUtils::isOnLine(robotPoints[i], robotPoints[i + 1], position, 50))
 		{
 			return true;
 		}
