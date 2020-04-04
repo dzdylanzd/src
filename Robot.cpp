@@ -565,18 +565,16 @@ void Robot::drive()
 						BoundedVector(
 								Model::RobotWorld::getRobotWorld().getGoal(
 										"home")->getPosition(), position));
-				position = getFrontLeft();
+				stepTowardsHome();
 				startDriving("home");
 			}
 		}
 	} catch (std::exception &e)
 	{
 		std::cerr << __PRETTY_FUNCTION__ << ": " << e.what() << std::endl;
-		Application::Logger::log("er ging iets erg mis");
 	} catch (...)
 	{
 		std::cerr << __PRETTY_FUNCTION__ << ": unknown exception" << std::endl;
-		Application::Logger::log("er ging iets erg mis");
 	}
 }
 /**
@@ -760,7 +758,7 @@ void Robot::sendMessage(const Robot::MessageType type,
 	}
 }
 
-void Robot::stepTowardHome()
+void Robot::stepTowardsHome()
 {
 	Point homePoint =
 			Model::RobotWorld::getRobotWorld().getGoal("home")->getPosition();

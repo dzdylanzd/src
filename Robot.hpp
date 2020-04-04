@@ -306,7 +306,7 @@ private:
 	/**
 	 * set one step towards home
 	 */
-	void stepTowardHome();
+	void stepTowardsHome();
 
 
 
