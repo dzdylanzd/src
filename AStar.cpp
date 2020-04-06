@@ -135,32 +135,6 @@ std::vector<Vertex> GetNeighbours(const Vertex &aVertex,
 				break;
 			}
 		}
-
-//		if (Utils::Shape2DUtils::isOnLine(robotPoints[0], robotPoints[1],
-//				vertex.asPoint(), 30))
-//		{
-//			addToNeigbours = false;
-//			break;
-//		}
-//		if (Utils::Shape2DUtils::isOnLine(robotPoints[2], robotPoints[3],
-//				vertex.asPoint(), 30))
-//		{
-//			addToNeigbours = false;
-//			break;
-//		}
-//		if (Utils::Shape2DUtils::isOnLine(robotPoints[4], robotPoints[5],
-//				vertex.asPoint(), 30))
-//		{
-//			addToNeigbours = false;
-//			break;
-//		}
-//		if (Utils::Shape2DUtils::isOnLine(robotPoints[6], robotPoints[7],
-//				vertex.asPoint(), 30))
-//		{
-//			addToNeigbours = false;
-//			break;
-//		}
-
 		if (addToNeigbours == true)
 		{
 			neighbours.push_back(vertex);
